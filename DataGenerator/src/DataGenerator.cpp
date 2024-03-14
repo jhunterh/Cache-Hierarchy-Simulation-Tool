@@ -18,7 +18,7 @@ enum MemoryAccessType
 std::ofstream outFile;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, MemoryAccessType type, IARG_TSC timeStamp) 
+VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, MemoryAccessType type, UINT64 timeStamp) 
 {
     std::string typeString("");
     switch (type) 
