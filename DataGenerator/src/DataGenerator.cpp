@@ -15,7 +15,8 @@ enum MemoryAccessType
 };
 
 // Global Output Stream
-std::ofstream outFile;
+static std::ofstream outFile;
+static PIN_MUTEX outFileMutex;
 
 // Called when load or store is encountered
 VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, MemoryAccessType type, UINT64 timeStamp) 
@@ -41,7 +42,9 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, MemoryAccessType type, UINT6
     };
 
     // Write LOAD/STORE to output file
+    PIN_MutexLock(&outFileMutex);
     outFile << typeString << " " << effectiveAddress << " " << timeStamp << std::endl;
+    PIN_MutexUnlock(&outFileMutex);
 }
 
 // Instrumentation routine to handle memory instructions
@@ -87,6 +90,9 @@ int main(int argc, char *argv[])
 
     // Instrument at the Instruction level (fine grained)
     INS_AddInstrumentFunction(Instruction, 0);
+
+    // Init OutFile Mutex
+    PIN_MutexInit(&outFileMutex);
 
     // Start the program
     PIN_StartProgram();
