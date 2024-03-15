@@ -1,7 +1,7 @@
 .PHONY: clean all
 
 DataGeneratorTool:
-	make -c DataGenerator/makefile PIN_ROOT=$(PIN_HOME) obj-intel64/DataGenerator.so
+	$(MAKE) -C DataGenerator obj-intel64/DataGenerator.so PIN_ROOT=$(PIN_HOME) 
 
 all: DataGeneratorTool
 
