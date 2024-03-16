@@ -21,10 +21,12 @@ void DatafileController::stopCapture()
 {
     if (m_isCapturing)
     {
+        std::stringstream outString("");
         for (auto entry : m_entryBuffer)
         {
-            m_outFile << entry.toString() << std::endl;
+            outString << entry.toString() << std::endl;
         }
+        m_outFile << outString.str();
     }
     m_isCapturing = false;
     m_outFile.close();
