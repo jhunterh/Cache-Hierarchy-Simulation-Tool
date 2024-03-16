@@ -20,7 +20,7 @@ public:
         ADDRINT effectiveAddress;
         UINT64 timeStamp;
 
-        DatafileEntry() = delete;
+        DatafileEntry() = default;
 
         DatafileEntry(MemoryAccessType type, ADDRINT address, UINT64 time) :
             accessType(type), 
@@ -36,7 +36,10 @@ public:
     void addEntry(DatafileEntry entry);
 
 private:
+    void flushEntryBufferToFile();
+
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
     bool m_isCapturing = false;
+    unsigned long m_entryIdx = 0;
 };
