@@ -11,6 +11,7 @@
 
 // Global Output Stream
 static PIN_MUTEX DatafileMutex;
+static DatafileController dataFile;
 
 // Called when load or store is encountered
 VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, DatafileController::MemoryAccessType type, UINT64 timeStamp) 
@@ -18,7 +19,7 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, DatafileController::MemoryAc
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
     DatafileController::DatafileEntry entry(type, effectiveAddress, timeStamp);
-    DatafileController::getInstance().addEntry(entry);
+    dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
 
@@ -49,7 +50,7 @@ VOID Instruction(INS ins, VOID *v)
 VOID Fini(INT32 code, VOID* v)
 {
     // Stop DatafileController
-    DatafileController::getInstance().stopCapture();
+    dataFile.stopCapture();
 }
 
 int main(int argc, char *argv[]) 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
     PIN_AddFiniFunction(Fini, 0);
 
     // Initialize DatafileController
-    DatafileController::getInstance().startCapture();
+    dataFile.startCapture();
 
     // Start the program
     PIN_StartProgram();

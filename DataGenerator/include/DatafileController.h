@@ -30,21 +30,12 @@ public:
         std::string toString();
     };
 
-    // singleton instance
-    static DatafileController& getInstance()
-    {
-        static DatafileController instance;
-        return instance;
-    }
-
     void startCapture();
     void stopCapture();
 
     void addEntry(DatafileEntry entry);
 
 private:
-    DatafileController();
-
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
     bool m_isCapturing = false;
