@@ -6,45 +6,20 @@
 #include <fstream>
 #include <string>
 
+#include "DatafileController.h"
 #include "pin.H"
 
-enum MemoryAccessType
-{
-    LOAD,
-    STORE
-};
-
 // Global Output Stream
-static std::ofstream outFile;
-static PIN_MUTEX outFileMutex;
+static PIN_MUTEX DatafileMutex;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, MemoryAccessType type, UINT64 timeStamp) 
+VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, DatafileController::MemoryAccessType type, UINT64 timeStamp) 
 {
-    std::string typeString("");
-    switch (type) 
-    {
-        case LOAD:
-        {
-            typeString = "LOAD";
-            break;
-        }
-        case STORE:
-        {
-            typeString = "STORE";
-            break;
-        }
-        default:
-        {
-            std::cerr << "Unrecognized MemoryAccessType! Returning." << std::endl;
-            return;
-        }
-    };
-
-    // Write LOAD/STORE to output file
-    PIN_MutexLock(&outFileMutex);
-    outFile << typeString << " " << effectiveAddress << " " << timeStamp << std::endl;
-    PIN_MutexUnlock(&outFileMutex);
+    // Send LOAD/STORE to DatafileController
+    PIN_MutexLock(&DatafileMutex);
+    DatafileController::DatafileEntry entry(type, effectiveAddress, timeStamp);
+    DatafileController::getInstance().addEntry(entry);
+    PIN_MutexUnlock(&DatafileMutex);
 }
 
 // Instrumentation routine to handle memory instructions
@@ -55,7 +30,7 @@ VOID Instruction(INS ins, VOID *v)
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYREAD_EA,
-                       IARG_UINT32, LOAD,
+                       IARG_UINT32, DatafileController::MemoryAccessType::LOAD,
                        IARG_TSC,
                        IARG_END);
     }
@@ -64,22 +39,21 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYWRITE_EA,
-                       IARG_UINT32, STORE,
+                       IARG_UINT32, DatafileController::MemoryAccessType::STORE,
                        IARG_TSC,
                        IARG_END);
     }
 }
 
+// This function is called when the application exits
+VOID Fini(INT32 code, VOID* v)
+{
+    // Stop DatafileController
+    DatafileController::getInstance().stopCapture();
+}
+
 int main(int argc, char *argv[]) 
 {
-    // Early Abort Case
-    outFile.open("data.txt", std::ios::out);
-    if (!outFile.is_open())
-    {
-        std::cerr << "Failed to open output file! Aborting." << std::endl;
-        return 1;
-    }
-
     // Initialize PIN
     PIN_InitSymbols();
     if (PIN_Init(argc, argv)) 
@@ -92,12 +66,16 @@ int main(int argc, char *argv[])
     INS_AddInstrumentFunction(Instruction, 0);
 
     // Init OutFile Mutex
-    PIN_MutexInit(&outFileMutex);
+    PIN_MutexInit(&DatafileMutex);
+
+    // Register Fini to be called when the application exits
+    PIN_AddFiniFunction(Fini, 0);
+
+    // Initialize DatafileController
+    DatafileController::getInstance().startCapture();
 
     // Start the program
     PIN_StartProgram();
-
-    outFile.close();
 
     return 0;
 }
