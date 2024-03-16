@@ -38,7 +38,7 @@ void DatafileController::flushEntryBufferToFile()
     {
         outString << m_entryBuffer[i].toString() << std::endl;
     }
-    m_outFile << outString.str();
+    m_outFile.write(outString.str().c_str(), outString.str().size());
 }
 
 void DatafileController::addEntry(DatafileEntry entry)
