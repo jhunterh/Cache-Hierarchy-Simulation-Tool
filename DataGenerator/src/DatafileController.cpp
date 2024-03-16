@@ -57,13 +57,14 @@ void DatafileController::addEntry(DatafileEntry entry)
 std::string DatafileController::DatafileEntry::toString()
 {
     std::stringstream returnString("");
+    returnString << std::to_string(pid);
     if (accessType == LOAD)
     {
-        returnString << "LOAD ";
+        returnString << " LOAD ";
     }
     else
     {
-        returnString << "STORE ";
+        returnString << " STORE ";
     }
     returnString << effectiveAddress << " " << timeStamp;
     return returnString.str();

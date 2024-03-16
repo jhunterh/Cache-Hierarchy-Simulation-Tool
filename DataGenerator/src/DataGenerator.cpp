@@ -5,12 +5,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unistd.h>
 
 #include "DatafileController.h"
 #include "pin.H"
 
 // Global Output Stream
 static PIN_MUTEX DatafileMutex;
+static pid_t pid;
 static DatafileController dataFile;
 
 // Called when load or store is encountered
@@ -18,7 +20,7 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, DatafileController::MemoryAc
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
-    DatafileController::DatafileEntry entry(type, effectiveAddress, timeStamp);
+    DatafileController::DatafileEntry entry(pid, type, effectiveAddress, timeStamp);
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
@@ -62,6 +64,9 @@ int main(int argc, char *argv[])
         std::cerr << "Error initializing PIN" << std::endl;
         return 1;
     }
+
+    // Set Process ID
+    pid = getpid();
 
     // Instrument at the Instruction level (fine grained)
     INS_AddInstrumentFunction(Instruction, 0);

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <unistd.h>
 
 #include "pin.H"
 
@@ -16,13 +17,15 @@ public:
 
     struct DatafileEntry
     {
+        pid_t pid;
         MemoryAccessType accessType;
         ADDRINT effectiveAddress;
         UINT64 timeStamp;
 
         DatafileEntry() = default;
 
-        DatafileEntry(MemoryAccessType type, ADDRINT address, UINT64 time) :
+        DatafileEntry(pid_t processid, MemoryAccessType type, ADDRINT address, UINT64 time) :
+            pid(processid),
             accessType(type), 
             effectiveAddress(address), 
             timeStamp(time) {}
