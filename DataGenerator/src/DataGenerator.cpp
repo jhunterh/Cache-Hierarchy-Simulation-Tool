@@ -5,18 +5,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <unistd.h>
 
 #include "DatafileController.h"
 #include "pin.H"
 
 // Global Output Stream
 static PIN_MUTEX DatafileMutex;
-static pid_t pid;
 static DatafileController dataFile;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, DatafileController::MemoryAccessType type, UINT64 timeStamp) 
+VOID MemoryAccessAnalysis(INT pid, ADDRINT effectiveAddress, DatafileController::MemoryAccessType type, UINT64 timeStamp) 
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
@@ -32,6 +30,7 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryRead(ins)) 
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
+                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYREAD_EA,
                        IARG_UINT32, DatafileController::MemoryAccessType::LOAD,
                        IARG_TSC,
@@ -41,6 +40,7 @@ VOID Instruction(INS ins, VOID *v)
     // Instrument Memory Write
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
+                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYWRITE_EA,
                        IARG_UINT32, DatafileController::MemoryAccessType::STORE,
                        IARG_TSC,
@@ -64,9 +64,6 @@ int main(int argc, char *argv[])
         std::cerr << "Error initializing PIN" << std::endl;
         return 1;
     }
-
-    // Set Process ID
-    pid = getpid();
 
     // Instrument at the Instruction level (fine grained)
     INS_AddInstrumentFunction(Instruction, 0);
