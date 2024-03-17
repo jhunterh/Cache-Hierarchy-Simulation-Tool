@@ -17,14 +17,14 @@ public:
 
     struct DatafileEntry
     {
-        INT pid;
+        UINT32 pid;
         MemoryAccessType accessType;
         ADDRINT effectiveAddress;
         UINT64 timeStamp;
 
         DatafileEntry() = default;
 
-        DatafileEntry(INT processid, MemoryAccessType type, ADDRINT address, UINT64 time) :
+        DatafileEntry(UINT32 processid, MemoryAccessType type, ADDRINT address, UINT64 time) :
             pid(processid),
             accessType(type), 
             effectiveAddress(address), 
