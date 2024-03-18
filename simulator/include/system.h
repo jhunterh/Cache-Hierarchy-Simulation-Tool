@@ -34,11 +34,6 @@ class System
 {
 public:
 
-    struct Stats : Cache::Stats
-    {
-        std::vector<Cache::Stats> CoreStats;  
-    };
-
     System(Latency memoryLatency);
     ~System();
 
@@ -48,11 +43,11 @@ public:
     Latency read(Address address);
     Latency write(Address address);
 
-    System::Stats getStats();
+    SystemStats getStats();
 
 private:
 
-    System::Stats stats;
+    ModuleStats totalSystemStats;
 
     std::vector<Core> coreList;
     std::vector<Cache> systemCaches;

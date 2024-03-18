@@ -57,15 +57,6 @@ class Cache
 {
 public:
 
-    struct Stats
-    {
-        uint64_t readHits = 0;
-        uint64_t readMisses = 0;
-        uint64_t writeHits = 0;
-        uint64_t writeMisses = 0;
-        uint64_t averageMemoryAccessTime = 0;
-    };
-
     // TODO: Add replacement method
     Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency);
     ~Cache();
@@ -75,11 +66,11 @@ public:
 
     Latency getLatency();
 
-    Cache::Stats getStats();
+    ModuleStats getStats();
 
 private:
 
-    Cache::Stats stats;
+    ModuleStats cacheStats;
 
     CacheFields getFieldsFromAddress(Address address);
 

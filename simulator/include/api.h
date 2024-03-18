@@ -28,7 +28,7 @@ public:
     void addSystem(const System& system);
     void clearSystems();
 
-    std::vector<System::Stats> runSimulation(std::vector<Instruction> instructionList);
+    std::vector<SystemStats> runSimulation(std::vector<Instruction> instructionList);
 
 private:
 

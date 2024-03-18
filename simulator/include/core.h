@@ -17,21 +17,16 @@ class Core
 {
 public:
 
-    struct Stats : Cache::Stats
-    {
-        std::vector<Cache::Stats> cacheStats;  
-    };
-
     void addCache(const Cache& cache);
 
     CacheReturn read(Address address);
     CacheReturn write(Address address);
 
-    Core::Stats getStats();
+    CoreStats getStats();
 
 private:
 
-    Core::Stats stats;
+    ModuleStats totalCoreStats;
 
     std::vector<Cache> caches;
 
