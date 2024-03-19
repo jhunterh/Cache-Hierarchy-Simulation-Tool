@@ -11,16 +11,16 @@ class DatafileController {
 public:
     enum MemoryAccessType
     {
-        LOAD,
-        STORE
+        LOAD = 0,
+        STORE = 1
     };
 
     struct DatafileEntry
     {
-        UINT32 pid;
-        MemoryAccessType accessType;
-        ADDRINT effectiveAddress;
-        UINT64 timeStamp;
+        UINT32 pid = 0;
+        MemoryAccessType accessType = LOAD;
+        ADDRINT effectiveAddress = 0;
+        UINT64 timeStamp = 0;
 
         DatafileEntry() = default;
 

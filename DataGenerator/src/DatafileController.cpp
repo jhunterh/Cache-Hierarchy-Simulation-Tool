@@ -7,7 +7,7 @@
 
 void DatafileController::startCapture()
 {
-    m_outFile.open("data.txt", std::ios::out);
+    m_outFile.open("data.dat", std::ios::out | std::ios::binary);
     if (!m_outFile.is_open())
     {
         std::cerr << "Failed to open output file!" << std::endl;
@@ -33,12 +33,11 @@ void DatafileController::stopCapture()
 
 void DatafileController::flushEntryBufferToFile()
 {
-    std::stringstream outString("");
-    for (unsigned long i = 0; i < m_entryIdx; ++i)
-    {
-        outString << m_entryBuffer[i].toString() << std::endl;
-    }
-    m_outFile.write(outString.str().c_str(), outString.str().size());
+    m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(unsigned long)); // write number of entries in data file first
+    m_outFile.write(reinterpret_cast<char*>(&m_entryBuffer[0]), m_entryIdx*sizeof(DatafileEntry));
+    m_entryBuffer.clear();
+    m_entryBuffer.resize(MAX_ENTRY_COUNT);
+    m_entryIdx = 0;
 }
 
 void DatafileController::addEntry(DatafileEntry entry)
@@ -49,7 +48,6 @@ void DatafileController::addEntry(DatafileEntry entry)
         if (m_entryIdx >= MAX_ENTRY_COUNT)
         {
             flushEntryBufferToFile();
-            m_entryIdx = 0;
         }
     }
 }
