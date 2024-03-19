@@ -33,7 +33,7 @@ void DatafileController::stopCapture()
 
 void DatafileController::flushEntryBufferToFile()
 {
-    m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(unsigned long)); // write number of entries in data file first
+    m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(uint64_t)); // write number of entries in data file first
     m_outFile.write(reinterpret_cast<char*>(&m_entryBuffer[0]), m_entryIdx*sizeof(DatafileEntry));
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
@@ -56,7 +56,7 @@ std::string DatafileController::DatafileEntry::toString()
 {
     std::stringstream returnString("");
     returnString << std::to_string(pid);
-    if (accessType == LOAD)
+    if (load_or_store == 0)
     {
         returnString << " LOAD ";
     }

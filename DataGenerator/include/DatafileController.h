@@ -4,29 +4,22 @@
 #include <vector>
 #include <string>
 #include <unistd.h>
-
-#include "pin.H"
+#include <cstdint>
 
 class DatafileController {
 public:
-    enum MemoryAccessType
-    {
-        LOAD = 0,
-        STORE = 1
-    };
-
     struct DatafileEntry
     {
-        UINT32 pid = 0;
-        MemoryAccessType accessType = LOAD;
-        ADDRINT effectiveAddress = 0;
-        UINT64 timeStamp = 0;
+        uint32_t pid = 0;
+        uint8_t load_or_store = 0; // 0 = load, 1 = store
+        uint64_t effectiveAddress = 0;
+        uint64_t timeStamp = 0;
 
         DatafileEntry() = default;
 
-        DatafileEntry(UINT32 processid, MemoryAccessType type, ADDRINT address, UINT64 time) :
+        DatafileEntry(uint32_t processid, uint8_t load_store, uint64_t address, uint64_t time) :
             pid(processid),
-            accessType(type), 
+            load_or_store(load_store), 
             effectiveAddress(address), 
             timeStamp(time) {}
 
@@ -44,5 +37,5 @@ private:
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
     bool m_isCapturing = false;
-    unsigned long m_entryIdx = 0;
+    uint64_t m_entryIdx = 0;
 };
