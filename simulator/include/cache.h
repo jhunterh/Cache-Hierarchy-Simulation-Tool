@@ -4,8 +4,10 @@
 #include <cinttypes>
 #include <vector>
 #include <memory>
+#include <deque>
 
 #include "types.h"
+#include "replacementpolicy.h"
 
 namespace CacheHierarchySimulator
 {
@@ -16,27 +18,24 @@ struct CacheEntry
     uint32_t tag = 0;
 };
 
-enum ReplacementPolicy
+enum WritePolicy
 {
-    FIFO,
-    LIFO,
-    LRU,
-    PLRU,
-    MRU,
-    LFU
+    READ_ONLY,
+    WRITE_THROUGH,
+    WRITE_THROUGH_ALLOCATE,
+    WRITE_BACK,
+    WRITE_BACK_ALLOCATE
 };
 
 // Typedefs
 typedef uint32_t CacheSize;
 typedef uint32_t BlockSize;
-typedef uint32_t AssociativitySize;
 
 typedef uint64_t AddressMask;
 
 typedef uint8_t FieldOffset;
 
 typedef uint32_t Tag;
-typedef uint16_t Index;
 struct CacheFields
 {
     Tag tag;
@@ -61,24 +60,32 @@ public:
     Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency);
     ~Cache();
 
-    CacheReturn read(Address address);
-    CacheReturn write(Address address);
+    CacheResult read(Address address);
+    CacheResult write(Address address);
+
+    void replaceLine(Address address);
 
     Latency getLatency();
+    WritePolicy getWritePolicy();
 
     ModuleStats getStats();
 
 private:
 
-    ModuleStats cacheStats;
+    CacheResult access(Address address);
 
     CacheFields getFieldsFromAddress(Address address);
+
+    ModuleStats stats;
 
     AddressSize addressSize;
     CacheSize cacheSize;
     BlockSize blockSize;
     AssociativitySize associativity;
     Latency latency;
+    WritePolicy writePolicy;
+
+    std::unique_ptr<ReplacementPolicy::IReplacementPolicy> replacementPolicy;
 
     AddressMask tagMask;
     AddressMask indexMask;
@@ -86,7 +93,6 @@ private:
     FieldOffset tagOffset;
     FieldOffset indexOffset;
     
-    // TODO: May have to add Set struct, depending on how Replacement is implemented
     std::vector<CacheEntry> entryTable;
 };
 

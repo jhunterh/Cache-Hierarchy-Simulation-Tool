@@ -28,7 +28,7 @@ int main(int argv, char* argc)
     std::vector<CacheHierarchySimulator::Instruction> instructionList;
 
     // Run the simulation
-    std::vector<CacheHierarchySimulator::System::Stats> stats = api.runSimulation(instructionList);
+    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
 
     return 0;
 }

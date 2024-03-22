@@ -84,34 +84,62 @@ Cache::~Cache()
     entryTable.clear();
 }
 
-CacheReturn Cache::read(size_t address)
+CacheResult Cache::read(Address address)
+{
+    CacheResult accessResult = this->access(address);
+    (accessResult == CACHE_HIT) ? stats.readHits++ : stats.readMisses++;
+    return accessResult;
+}
+
+CacheResult Cache::write(Address address)
+{
+    CacheResult accessResult = this->access(address);
+    (accessResult == CACHE_HIT) ? stats.writeHits++ : stats.writeMisses++;
+    return accessResult;
+}
+
+void Cache::replaceLine(Address address)
+{
+    CacheFields fields = getFieldsFromAddress(address);
+
+    SetLineIdx entryIdx = replacementPolicy->getNextReplacementIndex(fields.index);
+
+    CacheEntry& cacheEntry = entryTable.at(fields.index + entryIdx);
+
+    cacheEntry.tag = fields.tag;
+    cacheEntry.valid = true;
+}
+
+Latency Cache::getLatency()
+{
+    return latency;
+}
+
+WritePolicy Cache::getWritePolicy()
+{
+    return writePolicy;
+}
+
+CacheResult Cache::access(Address address)
 {
     // Get cache parameters
     CacheFields fields = getFieldsFromAddress(address);
 
-    // Find beginning of set
-    std::vector<CacheEntry>::iterator setBegin = entryTable.begin() + fields.index;
-
     // Iterate through set
-    for(std::vector<CacheEntry>::iterator it = setBegin; it < (setBegin + associativity); it++)
+    for(size_t entryIdx = fields.index; entryIdx < (fields.index + associativity); entryIdx++)
     {
+        CacheEntry& cacheEntry = entryTable.at(entryIdx);
+
         // If valid bit is set and tag is set, return hit
-        if(it->valid && it->tag == fields.tag)
+        if(cacheEntry.valid && cacheEntry.tag == fields.tag)
+        {
+            replacementPolicy->countAccess(fields.index, entryIdx);
             return CACHE_HIT;
+        }
     }
 
     // If not found, return cache miss
     return CACHE_MISS;
-}
-
-CacheReturn Cache::write(size_t address)
-{
-    // Get cache parameters
-    CacheFields fields = getFieldsFromAddress(address);
-
-    // TODO: Add write
-    // Dont forget to use replacement policy
-    
 }
 
 CacheFields Cache::getFieldsFromAddress(Address address)

@@ -12,19 +12,6 @@
 namespace CacheHierarchySimulator
 {
 
-// From my understanding, cache write policies are more a system level thing
-enum HitWritePolicy
-{
-    WRITE_THROUGH,
-    WRITE_BACK
-};
-
-enum MissWritePolicy
-{
-    WRITE_ALLOCATE,
-    NO_WRITE_ALLOCATE
-};
-
 /**
  * Class for representing a system, including cores, caches, and main memory.
  * Caches in a Core belong to that core, while Caches in the systemCaches
@@ -46,8 +33,6 @@ public:
     SystemStats getStats();
 
 private:
-
-    ModuleStats totalSystemStats;
 
     std::vector<Core> coreList;
     std::vector<Cache> systemCaches;
