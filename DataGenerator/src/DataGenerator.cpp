@@ -14,11 +14,11 @@ static PIN_MUTEX DatafileMutex;
 static DatafileController dataFile;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(INT pid, ADDRINT effectiveAddress, UINT32 load_store, UINT64 timeStamp) 
+VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 timeStamp) 
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
-    DatafileController::DatafileEntry entry(pid, load_store, effectiveAddress, timeStamp);
+    DatafileController::DatafileEntry entry(PIN_GetPid(), load_store, effectiveAddress, timeStamp);
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
@@ -30,7 +30,6 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryRead(ins)) 
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
-                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYREAD_EA,
                        IARG_UINT32, 0,
                        IARG_TSC,
@@ -40,7 +39,6 @@ VOID Instruction(INS ins, VOID *v)
     // Instrument Memory Write
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
-                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYWRITE_EA,
                        IARG_UINT32, 1,
                        IARG_TSC,
