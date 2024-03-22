@@ -1,40 +1,27 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "DatafileController.h"
 
 #define MAX_ENTRY_COUNT 60000000
 
-void DatafileController::startCapture()
+void DatafileController::flushEntryBufferToFile()
 {
-    m_outFile.open("data.dat", std::ios::out | std::ios::binary);
+    std::string filename("data/data_");
+    filename.append(std::to_string(currentPid));
+    filename.append("_");
+    filename.append(std::to_string(fileIdx++));
+    filename.append(".dat");
+    m_outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
     if (!m_outFile.is_open())
     {
         std::cerr << "Failed to open output file!" << std::endl;
     }
-    else
-    {
-        m_entryBuffer.clear();
-        m_entryBuffer.resize(MAX_ENTRY_COUNT);
-        m_entryIdx = 0;
-        m_isCapturing = true;
-    }
-}
 
-void DatafileController::stopCapture()
-{
-    if (m_isCapturing)
-    {
-        flushEntryBufferToFile();
-    }
-    m_isCapturing = false;
-    m_outFile.close();
-}
-
-void DatafileController::flushEntryBufferToFile()
-{
     m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(uint64_t)); // write number of entries in data file first
     m_outFile.write(reinterpret_cast<char*>(&m_entryBuffer[0]), m_entryIdx*sizeof(DatafileEntry));
+    m_outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0;
@@ -42,14 +29,29 @@ void DatafileController::flushEntryBufferToFile()
 
 void DatafileController::addEntry(DatafileEntry entry)
 {
-    if (m_isCapturing)
+    m_entryBuffer[m_entryIdx++] = entry;
+    if (m_entryIdx >= MAX_ENTRY_COUNT)
     {
-        m_entryBuffer[m_entryIdx++] = entry;
-        if (m_entryIdx >= MAX_ENTRY_COUNT)
-        {
-            flushEntryBufferToFile();
-        }
+        flushEntryBufferToFile();
     }
+}
+
+pid_t DatafileController::getCurrentPid()
+{
+    return currentPid;
+}
+
+// set current pid to new pid
+void DatafileController::setCurrentPid(pid_t newPid)
+{
+    currentPid = newPid;
+
+    // reset datafile parameters and entry buffer
+    if (m_outFile.is_open()) m_outFile.close();
+    m_entryBuffer.clear();
+    m_entryBuffer.resize(MAX_ENTRY_COUNT);
+    m_entryIdx = 0; 
+    fileIdx = 0;
 }
 
 std::string DatafileController::DatafileEntry::toString()

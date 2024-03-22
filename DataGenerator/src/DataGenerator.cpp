@@ -18,7 +18,15 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 ti
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
-    DatafileController::DatafileEntry entry(PIN_GetPid(), load_store, effectiveAddress, timeStamp);
+
+    // detect new child process start up
+    pid_t pid = PIN_GetPid();
+    if (pid != dataFile.getCurrentPid())
+    {
+        dataFile.setCurrentPid(pid);
+    }
+
+    DatafileController::DatafileEntry entry(pid, load_store, effectiveAddress, timeStamp);
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
@@ -49,8 +57,8 @@ VOID Instruction(INS ins, VOID *v)
 // This function is called when the application exits
 VOID Fini(INT32 code, VOID* v)
 {
-    // Stop DatafileController
-    dataFile.stopCapture();
+    // Flush datafile
+    dataFile.flushEntryBufferToFile();
 }
 
 int main(int argc, char *argv[]) 
@@ -73,7 +81,7 @@ int main(int argc, char *argv[])
     PIN_AddFiniFunction(Fini, 0);
 
     // Initialize DatafileController
-    dataFile.startCapture();
+    dataFile.setCurrentPid(PIN_GetPid());
 
     // Start the program
     PIN_StartProgram();
