@@ -31,11 +31,15 @@ public:
 
     void addEntry(DatafileEntry entry);
 
-private:
+    pid_t getCurrentPid();
+    void setCurrentPid(pid_t newPid);
+
     void flushEntryBufferToFile();
 
+private:
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
-    bool m_isCapturing = false;
     uint64_t m_entryIdx = 0;
+    pid_t currentPid = 0;
+    unsigned int fileIdx = 0;
 };

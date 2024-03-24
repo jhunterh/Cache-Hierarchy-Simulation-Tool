@@ -14,10 +14,18 @@ static PIN_MUTEX DatafileMutex;
 static DatafileController dataFile;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(INT pid, ADDRINT effectiveAddress, UINT32 load_store, UINT64 timeStamp) 
+VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 timeStamp) 
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
+
+    // detect new child process start up
+    pid_t pid = PIN_GetPid();
+    if (pid != dataFile.getCurrentPid())
+    {
+        dataFile.setCurrentPid(pid);
+    }
+
     DatafileController::DatafileEntry entry(pid, load_store, effectiveAddress, timeStamp);
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
@@ -30,7 +38,6 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryRead(ins)) 
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
-                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYREAD_EA,
                        IARG_UINT32, 0,
                        IARG_TSC,
@@ -40,7 +47,6 @@ VOID Instruction(INS ins, VOID *v)
     // Instrument Memory Write
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
-                       IARG_UINT32, PIN_GetPid(),
                        IARG_MEMORYWRITE_EA,
                        IARG_UINT32, 1,
                        IARG_TSC,
@@ -51,8 +57,8 @@ VOID Instruction(INS ins, VOID *v)
 // This function is called when the application exits
 VOID Fini(INT32 code, VOID* v)
 {
-    // Stop DatafileController
-    dataFile.stopCapture();
+    // Flush datafile
+    dataFile.flushEntryBufferToFile();
 }
 
 int main(int argc, char *argv[]) 
@@ -75,7 +81,7 @@ int main(int argc, char *argv[])
     PIN_AddFiniFunction(Fini, 0);
 
     // Initialize DatafileController
-    dataFile.startCapture();
+    dataFile.setCurrentPid(PIN_GetPid());
 
     // Start the program
     PIN_StartProgram();
