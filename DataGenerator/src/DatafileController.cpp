@@ -9,9 +9,9 @@
 void DatafileController::flushEntryBufferToFile()
 {
     std::string filename("data/data_");
-    filename.append(std::to_string(currentPid));
+    filename.append(std::to_string(m_currentPid));
     filename.append("_");
-    filename.append(std::to_string(fileIdx++));
+    filename.append(std::to_string(m_fileIdx++));
     filename.append(".dat");
     m_outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
     if (!m_outFile.is_open())
@@ -36,22 +36,27 @@ void DatafileController::addEntry(DatafileEntry entry)
     }
 }
 
+uint64_t DatafileController::getEntryIdx()
+{
+    return m_entryIdx;
+}
+
 pid_t DatafileController::getCurrentPid()
 {
-    return currentPid;
+    return m_currentPid;
 }
 
 // set current pid to new pid
 void DatafileController::setCurrentPid(pid_t newPid)
 {
-    currentPid = newPid;
+    m_currentPid = newPid;
 
     // reset datafile parameters and entry buffer
     if (m_outFile.is_open()) m_outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0; 
-    fileIdx = 0;
+    m_fileIdx = 0;
 }
 
 std::string DatafileController::DatafileEntry::toString()
