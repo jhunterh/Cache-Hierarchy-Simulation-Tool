@@ -13,7 +13,11 @@ obj/DatafileControllerTest.o:
 DatafileControllerTest: obj/DatafileControllerTest.o obj/DatafileController.o
 	g++ $(INCLUDE) $^ -o $@ 
 
+RunTests:
+	mkdir -p data
+	./DatafileControllerTest
+
 all: DatafileControllerTest
 
 clean:
-	rm obj/*.o DatafileControllerTest
+	rm -f obj/*.o DatafileControllerTest

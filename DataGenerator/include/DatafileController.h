@@ -35,6 +35,8 @@ public:
 
     uint64_t getEntryIdx();
 
+    unsigned int getFileIdx();
+
 private:
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;

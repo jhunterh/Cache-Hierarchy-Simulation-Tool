@@ -46,6 +46,11 @@ pid_t DatafileController::getCurrentPid()
     return m_currentPid;
 }
 
+unsigned int DatafileController::getFileIdx()
+{
+    return m_fileIdx;
+}
+
 // set current pid to new pid
 void DatafileController::setCurrentPid(pid_t newPid)
 {
