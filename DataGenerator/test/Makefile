@@ -14,6 +14,7 @@ DatafileControllerTest: obj/DatafileControllerTest.o obj/DatafileController.o
 	g++ $(INCLUDE) $^ -o $@ 
 
 RunTests:
+	rm -rf data
 	mkdir -p data
 	./DatafileControllerTest
 
