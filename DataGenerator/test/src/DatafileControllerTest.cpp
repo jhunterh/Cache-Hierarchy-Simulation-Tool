@@ -7,6 +7,7 @@ TEST_CASE("Add entries to the entry buffer")
 {
     DatafileController controller;
     controller.setCurrentPid(0);
+    controller.setExeName("data");
 
     DatafileController::DatafileEntry entry1(1,1,1,1);
     DatafileController::DatafileEntry entry2(2,0,2,2);

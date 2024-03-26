@@ -37,10 +37,14 @@ public:
 
     unsigned int getFileIdx();
 
+    std::string getExeName();
+    void setExeName(std::string newName);
+
 private:
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
     uint64_t m_entryIdx = 0;
     pid_t m_currentPid = 0;
     unsigned int m_fileIdx = 0;
+    std::string m_exeName = "";
 };

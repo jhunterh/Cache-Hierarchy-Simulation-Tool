@@ -8,7 +8,9 @@
 
 void DatafileController::flushEntryBufferToFile()
 {
-    std::string filename("data/data_");
+    std::string filename("data/");
+    filename.append(m_exeName);
+    filename.append("_");
     filename.append(std::to_string(m_currentPid));
     filename.append("_");
     filename.append(std::to_string(m_fileIdx++));
@@ -62,6 +64,16 @@ void DatafileController::setCurrentPid(pid_t newPid)
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0; 
     m_fileIdx = 0;
+}
+
+std::string DatafileController::getExeName()
+{
+    return m_exeName;
+}
+
+void DatafileController::setExeName(std::string newName)
+{
+    m_exeName = newName;
 }
 
 std::string DatafileController::DatafileEntry::toString()
