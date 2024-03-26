@@ -71,6 +71,26 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int idx = 0;
+    for (int i = 0; i < argc; ++i)
+    {
+        if ((std::string(argv[i]).compare("--") == 0) && (i+1 < argc))
+        {
+            idx = i+1;
+            break;
+        }
+    }
+
+    std::string fullName(argv[idx]);
+    std::string exeName = fullName.substr(fullName.find_last_of('/')+1);
+    size_t pos = 0;
+    if ((pos = exeName.find('.')) != std::string::npos)
+    {
+        exeName = exeName.substr(0, pos);
+    }
+
+    dataFile.setExeName(exeName);
+
     // Instrument at the Instruction level (fine grained)
     INS_AddInstrumentFunction(Instruction, 0);
 

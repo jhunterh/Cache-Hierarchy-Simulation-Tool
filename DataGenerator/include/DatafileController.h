@@ -26,9 +26,6 @@ public:
         std::string toString();
     };
 
-    void startCapture();
-    void stopCapture();
-
     void addEntry(DatafileEntry entry);
 
     pid_t getCurrentPid();
@@ -36,10 +33,18 @@ public:
 
     void flushEntryBufferToFile();
 
+    uint64_t getEntryIdx();
+
+    unsigned int getFileIdx();
+
+    std::string getExeName();
+    void setExeName(std::string newName);
+
 private:
     std::vector<DatafileEntry> m_entryBuffer;
     std::ofstream m_outFile;
     uint64_t m_entryIdx = 0;
-    pid_t currentPid = 0;
-    unsigned int fileIdx = 0;
+    pid_t m_currentPid = 0;
+    unsigned int m_fileIdx = 0;
+    std::string m_exeName = "";
 };
