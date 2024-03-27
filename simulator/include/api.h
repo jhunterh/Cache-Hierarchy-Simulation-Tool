@@ -2,6 +2,7 @@
 #define CHS_API_H
 
 #include "system.h"
+#include "replacementpolicy/policylist.h"
 
 namespace CacheHierarchySimulator
 {

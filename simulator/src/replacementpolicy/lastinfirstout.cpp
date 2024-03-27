@@ -5,19 +5,24 @@ namespace CacheHierarchySimulator
 
 namespace ReplacementPolicy
 {
-
-LastInFirstOut::LastInFirstOut(EntryIdx entryCount, AssociativitySize setLineSize) 
-    : setLineSize(setLineSize)
+    
+PolicyPtr LastInFirstOut::createPolicyInstance() const
 {
-    nextIndexList.resize(entryCount);
+    return PolicyPtr(new LastInFirstOut());
 }
 
-void LastInFirstOut::countAccess(Index setIdx, SetLineIdx entryIdx)
+void LastInFirstOut::initalize(SetIndex setCount, AssociativitySize setLineSize)
+{
+    this->setLineSize = setLineSize;
+    nextIndexList.resize(setCount);
+}
+
+void LastInFirstOut::countAccess(SetIndex setIdx, SetLineIdx entryIdx)
 {
 
 }
 
-SetLineIdx LastInFirstOut::getNextReplacementIndex(Index setIdx)
+SetLineIdx LastInFirstOut::getNextReplacementIndex(SetIndex setIdx)
 {
     SetLineIdx& lineIdx = nextIndexList.at(setIdx);
     SetLineIdx retval = lineIdx;

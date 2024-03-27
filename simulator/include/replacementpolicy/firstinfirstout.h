@@ -1,7 +1,7 @@
 #ifndef CHS_FIRST_IN_FIRST_OUT_H
 #define CHS_FIRST_IN_FIRST_OUT_H
 
-#include "replacementpolicy.h"
+#include "ireplacementpolicy.h"
 #include <vector>
 
 namespace CacheHierarchySimulator
@@ -14,11 +14,13 @@ class FirstInFirstOut : public IReplacementPolicy
 {
 public:
 
-    FirstInFirstOut(EntryIdx entryCount, AssociativitySize setLineSize);
-    void countAccess(Index setIdx, SetLineIdx entryIdx);
-    SetLineIdx getNextReplacementIndex(Index setIdx);
+    PolicyPtr createPolicyInstance() const;
+    void initalize(SetIndex setCount, AssociativitySize setLineSize);
+    void countAccess(SetIndex setIdx, SetLineIdx entryIdx);
+    SetLineIdx getNextReplacementIndex(SetIndex setIdx);
 
 private:
+
     AssociativitySize setLineSize;
     std::vector<SetLineIdx> nextIndexList;
 };
