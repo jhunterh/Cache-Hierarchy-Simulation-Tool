@@ -9,6 +9,7 @@ namespace CacheHierarchySimulator
 typedef uint64_t Address;
 typedef uint8_t AddressSize;
 
+typedef Address EntryIdx;
 typedef uint32_t AssociativitySize;
 typedef AssociativitySize SetLineIdx;
 typedef uint16_t Index;

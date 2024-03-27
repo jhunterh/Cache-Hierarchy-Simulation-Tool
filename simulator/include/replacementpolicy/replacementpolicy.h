@@ -17,7 +17,6 @@ public:
     virtual SetLineIdx getNextReplacementIndex(Index setIdx) = 0;
 };
 
-class FirstInFirstOut : public IReplacementPolicy {};
 class LastInFirstOut : public IReplacementPolicy {};
 class LeastRecentlyUsed : public IReplacementPolicy {};
 class PseudoLeastRecentlyUsed : public IReplacementPolicy {};
