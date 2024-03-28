@@ -2,6 +2,7 @@
 #define CHS_TYPES_H
 
 #include <cinttypes>
+#include <vector>
 
 namespace CacheHierarchySimulator
 {
