@@ -1,4 +1,5 @@
 #include "api.h"
+#include "basiccache.h"
 
 // Example simulation run (with no instructions)
 int main(int argv, char* argc)
@@ -7,17 +8,17 @@ int main(int argv, char* argc)
     CacheHierarchySimulator::Api api;
 
     // Create an l1 cache
-    CacheHierarchySimulator::Cache l1(64, 8192, 64, 4, 5, CacheHierarchySimulator::ReplacementPolicy::FIFO, CacheHierarchySimulator::WRITE_BACK_ALLOCATE);
-    //
+    size_t addressSize = 64;
+    CacheHierarchySimulator::BasicCache l1(addressSize, 8192, 64, 4, 5, CacheHierarchySimulator::WRITE_ALLOCATE, CacheHierarchySimulator::ReplacementPolicy::FIFO);
 
     // Create a new core
-    CacheHierarchySimulator::Core core;
+    CacheHierarchySimulator::Core core(addressSize);
 
     // Add cache to core
     core.addCache(l1);
     
     // Create system and add 4 cores of the same type
-    CacheHierarchySimulator::System system(10);
+    CacheHierarchySimulator::System system(addressSize, 10);
     system.addCore(core);
     system.addCore(core);
     system.addCore(core);
