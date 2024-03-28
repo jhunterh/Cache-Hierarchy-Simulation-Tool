@@ -88,6 +88,7 @@ OBJS = $(patsubst src/%.cpp, $(OBJDIR)%$(OBJ_SUFFIX), $(SRCS))
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 $(OBJDIR)%$(OBJ_SUFFIX): src/%.cpp
+	mkdir -p $(OBJDIR)
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $^
 
 # Build the tool as a shared object.
