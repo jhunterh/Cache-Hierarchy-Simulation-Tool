@@ -3,8 +3,9 @@
 
 #include <cinttypes>
 #include <vector>
+#include <memory>
 
-#include "cache.h"
+#include "icache.h"
 
 namespace CacheHierarchySimulator
 {
@@ -17,10 +18,11 @@ class Core
 {
 public:
 
-    Core();
+    Core(AddressSize addressSpace);
+    Core(const Core& rhs);
     ~Core();
 
-    void addCache(const Cache& cache);
+    void addCache(const ICache& cache);
 
     CoreResult read(Address address);
     CoreResult write(Address address);
@@ -29,9 +31,11 @@ public:
 
 private:
 
+    AddressSize addressSpace;
+
     ModuleStats stats;
 
-    std::vector<Cache> cacheList;
+    std::vector<std::unique_ptr<ICache>> cacheList;
 
 };
 
