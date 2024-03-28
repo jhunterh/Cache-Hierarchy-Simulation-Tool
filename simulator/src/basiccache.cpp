@@ -1,4 +1,4 @@
-#include <cache.h>
+#include <basiccache.h>
 
 namespace CacheHierarchySimulator
 {
@@ -25,7 +25,7 @@ inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset f
     fieldOut = (addressIn >> fieldOffset) & fieldMask;
 }
 
-Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, const ReplacementPolicy::IReplacementPolicy& replacementPolicy, WritePolicy writePolicy) : 
+BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::IReplacementPolicy& replacementPolicy) : 
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
     // Make sure cacheSize is divisible by blockSize
@@ -61,6 +61,12 @@ Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, 
     // Calculate field sizes
     uint64_t offsetSize = fastLog2(blockSize);
     uint64_t indexSize = fastLog2(blockCount / associativity);
+
+    if((indexSize + offsetSize) >= addressSize)
+    {
+        throw InvalidAddressSizeException();
+    }
+
     uint64_t tagSize = addressSize - indexSize - offsetSize;
 
     // Calculate masks
@@ -83,26 +89,71 @@ Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, 
     this->replacementPolicy->initalize(indexSize, associativity);
 }
 
-Cache::~Cache()
+BasicCache::BasicCache(const BasicCache& rhs)
+    : BasicCache(rhs.addressSize, rhs.cacheSize, rhs.blockSize, rhs.associativity, rhs.latency, rhs.writePolicy, *rhs.replacementPolicy)
+{
+    
+}
+
+BasicCache::~BasicCache()
 {
     entryTable.clear();
 }
 
-CacheResult Cache::read(Address address)
+std::unique_ptr<ICache> BasicCache::createInstance() const
+{
+    return std::unique_ptr<ICache>(new BasicCache(*this));
+}
+
+void BasicCache::initialize(AddressSize addressSize)
+{
+    if(addressSize != this->addressSize)
+    {
+        throw MismatchedAddressSpaceException();
+    }
+}
+
+CacheResult BasicCache::read(Address address)
 {
     CacheResult accessResult = this->access(address);
-    (accessResult == CACHE_HIT) ? stats.readHits++ : stats.readMisses++;
+    if(accessResult == CACHE_HIT)
+    {
+        stats.readHits++;
+    }
+    else
+    {
+        stats.readMisses++;
+
+        // If cache miss, replace cache line
+        replaceLine(address);
+    }
     return accessResult;
 }
 
-CacheResult Cache::write(Address address)
+CacheResult BasicCache::write(Address address)
 {
     CacheResult accessResult = this->access(address);
-    (accessResult == CACHE_HIT) ? stats.writeHits++ : stats.writeMisses++;
+    if(accessResult == CACHE_HIT)
+    {
+        stats.writeHits++;
+        // If cache write hit, always write to cache
+    }
+    else
+    {
+        stats.writeMisses++;
+
+        // If cache write miss, use write policy
+        if(WritePolicy::WRITE_ALLOCATE)
+        {
+            // If write allocate, replace line
+            replaceLine(address);
+        }
+    }
+
     return accessResult;
 }
 
-void Cache::replaceLine(Address address)
+void BasicCache::replaceLine(Address address)
 {
     CacheFields fields = getFieldsFromAddress(address);
 
@@ -114,17 +165,17 @@ void Cache::replaceLine(Address address)
     cacheEntry.valid = true;
 }
 
-Latency Cache::getLatency()
+Latency BasicCache::getLatency()
 {
     return latency;
 }
 
-WritePolicy Cache::getWritePolicy()
+ModuleStats BasicCache::getStats()
 {
-    return writePolicy;
+    return stats;
 }
 
-CacheResult Cache::access(Address address)
+CacheResult BasicCache::access(Address address)
 {
     // Get cache parameters
     CacheFields fields = getFieldsFromAddress(address);
@@ -146,7 +197,7 @@ CacheResult Cache::access(Address address)
     return CACHE_MISS;
 }
 
-CacheFields Cache::getFieldsFromAddress(Address address)
+CacheFields BasicCache::getFieldsFromAddress(Address address)
 {
     CacheFields fields;
 
