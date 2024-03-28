@@ -7,7 +7,7 @@
 #include <deque>
 
 #include "types.h"
-#include "replacementpolicy.h"
+#include "ireplacementpolicy.h"
 
 namespace CacheHierarchySimulator
 {
@@ -39,7 +39,7 @@ typedef uint32_t Tag;
 struct CacheFields
 {
     Tag tag;
-    Index index;
+    SetIndex index;
 };
 
 class InvalidCacheSizeException : public std::exception {};
@@ -56,8 +56,7 @@ class Cache
 {
 public:
 
-    // TODO: Add replacement method
-    Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency);
+    Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, const ReplacementPolicy::IReplacementPolicy& replacementPolicy, WritePolicy writePolicy);
     ~Cache();
 
     CacheResult read(Address address);
@@ -85,7 +84,7 @@ private:
     Latency latency;
     WritePolicy writePolicy;
 
-    std::unique_ptr<ReplacementPolicy::IReplacementPolicy> replacementPolicy;
+    ReplacementPolicy::PolicyPtr replacementPolicy;
 
     AddressMask tagMask;
     AddressMask indexMask;

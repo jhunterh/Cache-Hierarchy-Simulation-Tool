@@ -7,7 +7,8 @@ int main(int argv, char* argc)
     CacheHierarchySimulator::Api api;
 
     // Create an l1 cache
-    CacheHierarchySimulator::Cache l1(64, 8192, 64, 4, 5);
+    CacheHierarchySimulator::Cache l1(64, 8192, 64, 4, 5, CacheHierarchySimulator::ReplacementPolicy::FIFO, CacheHierarchySimulator::WRITE_BACK_ALLOCATE);
+    //
 
     // Create a new core
     CacheHierarchySimulator::Core core;
