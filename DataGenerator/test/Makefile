@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-INCLUDE = -I../include -Iinclude
+INCLUDE = -I../include -Iinclude -I../../simulator/include -I../../simulator/include/replacementpolicy
 
 obj/DatafileController.o:
 	mkdir -p obj

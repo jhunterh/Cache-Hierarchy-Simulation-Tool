@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include "DatafileController.h"
+#include "api.h"
 
 namespace CacheHierarchySimulator
 {
 
-std::vector<DatafileController::DatafileEntry> parseInstructionList();
+std::vector<Instruction> parseInstructionList();
 
 }
 

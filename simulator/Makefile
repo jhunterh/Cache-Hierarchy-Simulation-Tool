@@ -1,4 +1,4 @@
-INCLUDES = -Iinclude -Iinclude/replacementpolicy -I../DataGenerator/include
+INCLUDES = -Iinclude -Iinclude/replacementpolicy
 
 REPL_SRCS = $(wildcard src/replacementpolicy/*.cpp)
 REPL_OBJS = $(REPL_SRCS:src/replacementpolicy/%.cpp=obj/replacementpolicy/%.o)

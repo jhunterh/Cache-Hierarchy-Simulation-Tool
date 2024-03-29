@@ -9,7 +9,7 @@
 namespace CacheHierarchySimulator
 {
 
-std::vector<DatafileController::DatafileEntry> parseInstructionList()
+std::vector<Instruction> parseInstructionList()
 {
     // get datafile names from data folder
     std::vector<std::string> dataFiles;
@@ -22,7 +22,7 @@ std::vector<DatafileController::DatafileEntry> parseInstructionList()
     }
 
     // read entries from each datafile and add them to main vector
-    std::vector<DatafileController::DatafileEntry> sortedInstructionList;
+    std::vector<Instruction> sortedInstructionList;
     for (const std::string& filename : dataFiles)
     {
         std::cout << "Reading data for " << filename << std::endl;
@@ -38,18 +38,18 @@ std::vector<DatafileController::DatafileEntry> parseInstructionList()
         dataFile.seekg(0, std::ios::end);
         fileSize = dataFile.tellg();
         dataFile.seekg(0, std::ios::beg);
-        DatafileController::DatafileEntry *instructionList = new DatafileController::DatafileEntry[fileSize/sizeof(DatafileController::DatafileEntry)];
+        Instruction *instructionList = new Instruction[fileSize/sizeof(Instruction)];
         dataFile.read((char*)instructionList, fileSize);
         dataFile.close();
-        sortedInstructionList.insert(sortedInstructionList.end(), instructionList, instructionList+(fileSize/sizeof(DatafileController::DatafileEntry)));
+        sortedInstructionList.insert(sortedInstructionList.end(), instructionList, instructionList+(fileSize/sizeof(Instruction)));
         delete[] instructionList;
     }
 
     // sort the final instruction list by timestamp
     std::sort(sortedInstructionList.begin(), sortedInstructionList.end(), 
-    [](const DatafileController::DatafileEntry& a, const DatafileController::DatafileEntry& b) 
+    [](const Instruction& a, const Instruction& b) 
     {
-        return a.timeStamp < b.timeStamp;
+        return a.cycleTime < b.cycleTime;
     });
 
     return sortedInstructionList;
