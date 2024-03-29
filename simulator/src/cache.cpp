@@ -25,8 +25,8 @@ inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset f
     fieldOut = (addressIn >> fieldOffset) & fieldMask;
 }
 
-Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency) : 
-        addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency)
+Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, const ReplacementPolicy::IReplacementPolicy& replacementPolicy, WritePolicy writePolicy) : 
+        addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
     // Make sure cacheSize is divisible by blockSize
     if(!(cacheSize % blockSize))
@@ -77,6 +77,10 @@ Cache::Cache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, 
 
     // Resize CacheEntry table
     entryTable.resize(blockCount);
+
+    // Create replacement policy instance
+    this->replacementPolicy = replacementPolicy.createPolicyInstance();
+    this->replacementPolicy->initalize(indexSize, associativity);
 }
 
 Cache::~Cache()

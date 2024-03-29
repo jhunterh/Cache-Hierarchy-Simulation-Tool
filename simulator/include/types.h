@@ -11,7 +11,7 @@ typedef uint8_t AddressSize;
 
 typedef uint32_t AssociativitySize;
 typedef AssociativitySize SetLineIdx;
-typedef uint16_t Index;
+typedef uint16_t SetIndex;
 
 typedef uint32_t Latency;
 
