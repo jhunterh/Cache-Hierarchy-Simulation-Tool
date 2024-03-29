@@ -36,18 +36,18 @@ TEST_CASE("Add entries to the entry buffer")
         std::ifstream dataFile;
         dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
         CHECK(dataFile.is_open() == true);
-        CacheHierarchySimulator::Instruction readEntry(0,0,0,0);
+        std::vector<CacheHierarchySimulator::Instruction> iList;
+        iList.resize(2);
 
-        dataFile.read((char*)&readEntry, sizeof(CacheHierarchySimulator::Instruction));
-        CHECK(readEntry.address == 1);
-        CHECK(readEntry.read_write == 1);
-        CHECK(readEntry.pid == 1);
-        CHECK(readEntry.cycleTime == 1);
+        dataFile.read((char*)iList.data(), sizeof(CacheHierarchySimulator::Instruction)*2);
+        CHECK(iList[0].address == 1);
+        CHECK(iList[0].read_write == 1);
+        CHECK(iList[0].pid == 1);
+        CHECK(iList[0].cycleTime == 1);
 
-        dataFile.read((char*)&readEntry, sizeof(CacheHierarchySimulator::Instruction));
-        CHECK(readEntry.address == 2);
-        CHECK(readEntry.read_write == 0);
-        CHECK(readEntry.pid == 2);
-        CHECK(readEntry.cycleTime == 2);
+        CHECK(iList[1].address == 2);
+        CHECK(iList[1].read_write == 0);
+        CHECK(iList[1].pid == 2);
+        CHECK(iList[1].cycleTime == 2);
     }
 }

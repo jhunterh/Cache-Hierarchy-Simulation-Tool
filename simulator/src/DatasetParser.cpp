@@ -38,11 +38,11 @@ std::vector<Instruction> parseInstructionList()
         dataFile.seekg(0, std::ios::end);
         fileSize = dataFile.tellg();
         dataFile.seekg(0, std::ios::beg);
-        Instruction *instructionList = new Instruction[fileSize/sizeof(Instruction)];
-        dataFile.read((char*)instructionList, fileSize);
+        std::vector<Instruction> iList;
+        iList.resize(fileSize/sizeof(Instruction));
+        dataFile.read((char*)iList.data(), fileSize);
         dataFile.close();
-        sortedInstructionList.insert(sortedInstructionList.end(), instructionList, instructionList+(fileSize/sizeof(Instruction)));
-        delete[] instructionList;
+        sortedInstructionList.insert(sortedInstructionList.end(), iList.begin(), iList.end());
     }
 
     // sort the final instruction list by timestamp
