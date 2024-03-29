@@ -27,15 +27,19 @@ void System::addSystemCache(const ICache& cache)
 Latency System::read(Address address)
 {
     // TODO: Implement read
+    return 0;
 }
 
 Latency System::write(Address address)
 {
     // TODO: Implement write
+    return 0;
 }
 
 SystemStats System::getStats()
 {
     // TODO: Implement stats
+    SystemStats retVal;
+    return retVal;
 }
 }
