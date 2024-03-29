@@ -10,6 +10,10 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
+class IReplacementPolicy; // forward declaration
+
+typedef std::unique_ptr<IReplacementPolicy> PolicyPtr;
+
 class IReplacementPolicy
 {
 public:
@@ -19,8 +23,6 @@ public:
     virtual void countAccess(SetIndex setIdx, SetLineIdx entryIdx) = 0;
     virtual SetLineIdx getNextReplacementIndex(SetIndex setIdx) = 0;
 };
-
-typedef std::unique_ptr<IReplacementPolicy> PolicyPtr;
 
 }
 
