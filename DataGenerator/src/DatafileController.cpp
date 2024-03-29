@@ -21,8 +21,7 @@ void DatafileController::flushEntryBufferToFile()
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(uint64_t)); // write number of entries in data file first
-    m_outFile.write(reinterpret_cast<char*>(&m_entryBuffer[0]), m_entryIdx*sizeof(DatafileEntry));
+    m_outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(DatafileEntry));
     m_outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);

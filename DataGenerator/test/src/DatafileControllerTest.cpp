@@ -35,9 +35,6 @@ TEST_CASE("Add entries to the entry buffer")
         std::ifstream dataFile;
         dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
         CHECK(dataFile.is_open() == true);
-        uint64_t entryCount = 0;
-        dataFile.read((char*)&entryCount, sizeof(uint64_t));
-        CHECK(entryCount == 2);
         DatafileController::DatafileEntry readEntry(0,0,0,0);
 
         dataFile.read((char*)&readEntry, sizeof(DatafileController::DatafileEntry));
