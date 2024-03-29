@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include "icache.h"
+#include "cacheinterface.h"
 
 namespace CacheHierarchySimulator
 {
@@ -22,7 +22,7 @@ public:
     Core(const Core& rhs);
     ~Core();
 
-    void addCache(const ICache& cache);
+    void addCache(const CacheInterface& cache);
 
     CoreResult read(Address address);
     CoreResult write(Address address);
@@ -35,7 +35,7 @@ private:
 
     ModuleStats stats;
 
-    std::vector<std::unique_ptr<ICache>> cacheList;
+    std::vector<std::unique_ptr<CacheInterface>> cacheList;
 
 };
 

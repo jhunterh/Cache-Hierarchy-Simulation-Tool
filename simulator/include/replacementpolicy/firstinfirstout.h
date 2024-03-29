@@ -1,7 +1,7 @@
 #ifndef CHS_FIRST_IN_FIRST_OUT_H
 #define CHS_FIRST_IN_FIRST_OUT_H
 
-#include "ireplacementpolicy.h"
+#include "policyinterface.h"
 #include <vector>
 
 namespace CacheHierarchySimulator
@@ -10,7 +10,7 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
-class FirstInFirstOut : public IReplacementPolicy
+class FirstInFirstOut : public PolicyInterface
 {
 public:
 

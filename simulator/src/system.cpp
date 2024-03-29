@@ -19,7 +19,7 @@ void System::addCore(const Core& core)
     coreList.push_back(core);
 }
 
-void System::addSystemCache(const ICache& cache)
+void System::addSystemCache(const CacheInterface& cache)
 {
     systemCacheList.push_back(cache.createInstance());
 }

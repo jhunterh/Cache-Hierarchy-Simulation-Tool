@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "core.h"
-#include "icache.h"
+#include "cacheinterface.h"
 
 namespace CacheHierarchySimulator
 {
@@ -25,7 +25,7 @@ public:
     ~System();
 
     void addCore(const Core& core);
-    void addSystemCache(const ICache& cache);
+    void addSystemCache(const CacheInterface& cache);
 
     Latency read(Address address);
     Latency write(Address address);
@@ -35,7 +35,7 @@ public:
 private:
 
     std::vector<Core> coreList;
-    std::vector<std::unique_ptr<ICache>> systemCacheList;
+    std::vector<std::unique_ptr<CacheInterface>> systemCacheList;
 
     Latency memoryLatency;
     AddressSize addressSpace;
