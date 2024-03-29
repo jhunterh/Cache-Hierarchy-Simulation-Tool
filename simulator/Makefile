@@ -15,7 +15,12 @@ obj/replacementpolicy/%.o: src/replacementpolicy/%.cpp
 	mkdir -p obj/replacementpolicy
 	g++ -std=c++17 -c -o $@ $(INCLUDES) $^
 
-all: $(REPL_OBJS) $(SIM_OBJS)
+lib/libsimulator.a: $(REPL_OBJS) $(SIM_OBJS)
+	mkdir -p lib
+	ar rcs $@ $^
+
+all: lib/libsimulator.a
 
 clean:
 	rm -rf obj/*
+	rm -rf lib/*
