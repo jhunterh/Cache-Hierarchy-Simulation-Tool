@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "core.h"
-#include "cache.h"
+#include "icache.h"
 
 namespace CacheHierarchySimulator
 {
@@ -21,11 +21,11 @@ class System
 {
 public:
 
-    System(Latency memoryLatency);
+    System(AddressSize addressSpace, Latency memoryLatency);
     ~System();
 
     void addCore(const Core& core);
-    void addSystemCache(const Cache& cache);
+    void addSystemCache(const ICache& cache);
 
     Latency read(Address address);
     Latency write(Address address);
@@ -35,7 +35,7 @@ public:
 private:
 
     std::vector<Core> coreList;
-    std::vector<Cache> systemCaches;
+    std::vector<std::unique_ptr<ICache>> systemCacheList;
 
     Latency memoryLatency;
     AddressSize addressSpace;
