@@ -11,7 +11,7 @@ Core::Core(AddressSize addressSpace) : addressSpace(addressSpace)
 Core::Core(const Core& rhs) : Core(addressSpace)
 {
     // Copy existing caches
-    for(const std::unique_ptr<ICache>& cache : rhs.cacheList)
+    for(const std::unique_ptr<CacheInterface>& cache : rhs.cacheList)
     {
         cacheList.push_back(cache->createInstance());
     }
@@ -22,7 +22,7 @@ Core::~Core()
     cacheList.clear();
 }
 
-void Core::addCache(const ICache& cache)
+void Core::addCache(const CacheInterface& cache)
 {
     cacheList.push_back(cache.createInstance());
 }
@@ -37,7 +37,7 @@ CoreResult Core::read(Address address)
     };
 
     // For each cache in list
-    for(std::unique_ptr<ICache>& cache : cacheList)
+    for(std::unique_ptr<CacheInterface>& cache : cacheList)
     {
         // Add cache latency
         cacheResult.latency += cache->getLatency();
@@ -70,7 +70,7 @@ CoreResult Core::write(Address address)
     };
 
     // For each cache in list
-    for(std::unique_ptr<ICache>& cache : cacheList)
+    for(std::unique_ptr<CacheInterface>& cache : cacheList)
     {
         // Add cache latency
         cacheResult.latency += cache->getLatency();

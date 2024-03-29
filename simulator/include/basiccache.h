@@ -1,7 +1,7 @@
 #ifndef CHS_BASIC_CACHE_H
 #define CHS_BASIC_CACHE_H
 
-#include "icache.h"
+#include "cacheinterface.h"
 
 namespace CacheHierarchySimulator
 {
@@ -9,15 +9,15 @@ namespace CacheHierarchySimulator
 /**
  * Class for representing a cache 
 */
-class BasicCache : public ICache
+class BasicCache : public CacheInterface
 {
 public:
 
-    BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::IReplacementPolicy& replacementPolicy);
+    BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy);
     BasicCache(const BasicCache& rhs);
     ~BasicCache();
 
-    std::unique_ptr<ICache> createInstance() const;
+    std::unique_ptr<CacheInterface> createInstance() const;
     void initialize(AddressSize addressSize);
 
     CacheResult read(Address address);

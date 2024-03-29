@@ -1,5 +1,5 @@
-#ifndef CHS_I_CACHE_H
-#define CHS_I_CACHE_H
+#ifndef CHS_CACHE_INTERFACE_H
+#define CHS_CACHE_INTERFACE_H
 
 #include <cinttypes>
 #include <vector>
@@ -7,7 +7,7 @@
 #include <deque>
 
 #include "types.h"
-#include "ireplacementpolicy.h"
+#include "policyinterface.h"
 
 namespace CacheHierarchySimulator
 {
@@ -49,11 +49,11 @@ class MismatchedAddressSpaceException : public CacheException {};
 /**
  * Interface for representing a cache 
 */
-class ICache
+class CacheInterface
 {
 public:
 
-    virtual std::unique_ptr<ICache> createInstance() const = 0;
+    virtual std::unique_ptr<CacheInterface> createInstance() const = 0;
     virtual void initialize(AddressSize addressSize) = 0;
 
     CacheResult read(Address address);
@@ -69,4 +69,4 @@ public:
 
 }
 
-#endif // CHS_I_CACHE_H
+#endif // CHS_CACHE_INTERFACE_H

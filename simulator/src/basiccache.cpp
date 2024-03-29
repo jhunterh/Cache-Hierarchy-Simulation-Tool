@@ -25,7 +25,7 @@ inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset f
     fieldOut = (addressIn >> fieldOffset) & fieldMask;
 }
 
-BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::IReplacementPolicy& replacementPolicy) : 
+BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy) : 
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
     // Make sure cacheSize is divisible by blockSize
@@ -100,9 +100,9 @@ BasicCache::~BasicCache()
     entryTable.clear();
 }
 
-std::unique_ptr<ICache> BasicCache::createInstance() const
+std::unique_ptr<CacheInterface> BasicCache::createInstance() const
 {
-    return std::unique_ptr<ICache>(new BasicCache(*this));
+    return std::unique_ptr<CacheInterface>(new BasicCache(*this));
 }
 
 void BasicCache::initialize(AddressSize addressSize)
