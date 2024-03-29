@@ -8,15 +8,7 @@
 namespace CacheHierarchySimulator
 {
 
-/**
- * Class for parsing dataset files into instructions that the simulator can process
- */
-class DatasetParser
-{
-public:
-    DatasetParser() = delete;
-    static std::vector<DatafileController::DatafileEntry> parseInstructionList();
-};
+std::vector<DatafileController::DatafileEntry> parseInstructionList();
 
 }
 

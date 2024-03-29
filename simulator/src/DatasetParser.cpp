@@ -9,7 +9,7 @@
 namespace CacheHierarchySimulator
 {
 
-std::vector<DatafileController::DatafileEntry> DatasetParser::parseInstructionList()
+std::vector<DatafileController::DatafileEntry> parseInstructionList()
 {
     // get datafile names from data folder
     std::vector<std::string> dataFiles;
