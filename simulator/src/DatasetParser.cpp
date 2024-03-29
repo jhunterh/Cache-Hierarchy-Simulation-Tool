@@ -2,27 +2,28 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <string>
 
 #include "DatasetParser.h"
 
 namespace CacheHierarchySimulator
 {
 
-DatasetParser::DatasetParser(std::string dataset)
+std::vector<DatafileController::DatafileEntry> DatasetParser::parseInstructionList()
 {
-    for (const auto& file : std::filesystem::directory_iterator(dataset)) 
+    // get datafile names from data folder
+    std::vector<std::string> dataFiles;
+    for (const auto& file : std::filesystem::directory_iterator("data")) 
     {
         if (std::filesystem::is_regular_file(file) && file.path().extension() == ".dat") 
         {
-            m_datafiles.push_back(file.path().string());
+            dataFiles.push_back(file.path().string());
         }
     }
-}
 
-std::vector<DatafileController::DatafileEntry> DatasetParser::parseInstructionList()
-{
+    // read entries from each datafile and add them to main vector
     std::vector<DatafileController::DatafileEntry> sortedInstructionList;
-    for (const std::string& filename : m_datafiles)
+    for (const std::string& filename : dataFiles)
     {
         std::cout << "Reading data for " << filename << std::endl;
         std::ifstream dataFile;

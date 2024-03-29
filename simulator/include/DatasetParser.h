@@ -1,7 +1,6 @@
 #ifndef CHS_DATASETPARSER_H
 #define CHS_DATASETPARSER_H
 
-#include <string>
 #include <vector>
 
 #include "DatafileController.h"
@@ -16,12 +15,7 @@ class DatasetParser
 {
 public:
     DatasetParser() = delete;
-    DatasetParser(std::string dataset = "data");
-
-    std::vector<DatafileController::DatafileEntry> parseInstructionList();
-
-private:
-    std::vector<std::string> m_datafiles;
+    static std::vector<DatafileController::DatafileEntry> parseInstructionList();
 };
 
 }
