@@ -42,7 +42,7 @@ public:
 
 private:
 
-    std::vector<System> systems;
+    std::vector<System> systemList;
 };
 
 }

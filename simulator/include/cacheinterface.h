@@ -56,12 +56,8 @@ public:
     virtual std::unique_ptr<CacheInterface> createInstance() const = 0;
     virtual void initialize(AddressSize addressSize) = 0;
 
-    CacheResult read(Address address);
-    CacheResult write(Address address);
-
-    void replaceLine(Address address);
-
-    Latency getLatency();
+    AccessResult read(Address address);
+    AccessResult write(Address address);
 
     ModuleStats getStats();
 

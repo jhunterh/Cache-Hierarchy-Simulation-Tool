@@ -24,8 +24,8 @@ public:
 
     void addCache(const CacheInterface& cache);
 
-    CoreResult read(Address address);
-    CoreResult write(Address address);
+    AccessResult read(Address address);
+    AccessResult write(Address address);
 
     CoreStats getStats();
 
