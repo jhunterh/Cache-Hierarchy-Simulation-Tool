@@ -1,5 +1,5 @@
-#ifndef CHS_I_REPLACEMENT_POLICY_H
-#define CHS_I_REPLACEMENT_POLICY_H
+#ifndef CHS_POLICY_INTERFACE_H
+#define CHS_POLICY_INTERFACE_H
 
 #include "types.h"
 #include <memory>
@@ -10,7 +10,11 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
-class IReplacementPolicy
+class PolicyInterface; // forward declaration
+
+typedef std::unique_ptr<PolicyInterface> PolicyPtr;
+
+class PolicyInterface
 {
 public:
 
@@ -20,10 +24,8 @@ public:
     virtual SetLineIdx getNextReplacementIndex(SetIndex setIdx) = 0;
 };
 
-typedef std::unique_ptr<IReplacementPolicy> PolicyPtr;
-
 }
 
 }
 
-#endif // CHS_I_REPLACEMENT_POLICY_H
+#endif // CHS_POLICY_INTERFACE_H

@@ -21,15 +21,14 @@ void DatafileController::flushEntryBufferToFile()
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    m_outFile.write(reinterpret_cast<char*>(&m_entryIdx), sizeof(uint64_t)); // write number of entries in data file first
-    m_outFile.write(reinterpret_cast<char*>(&m_entryBuffer[0]), m_entryIdx*sizeof(DatafileEntry));
+    m_outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(CacheHierarchySimulator::Instruction));
     m_outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0;
 }
 
-void DatafileController::addEntry(DatafileEntry entry)
+void DatafileController::addEntry(CacheHierarchySimulator::Instruction entry)
 {
     m_entryBuffer[m_entryIdx++] = entry;
     if (m_entryIdx >= MAX_ENTRY_COUNT)
@@ -74,20 +73,4 @@ std::string DatafileController::getExeName()
 void DatafileController::setExeName(std::string newName)
 {
     m_exeName = newName;
-}
-
-std::string DatafileController::DatafileEntry::toString()
-{
-    std::stringstream returnString("");
-    returnString << std::to_string(pid);
-    if (load_or_store == 0)
-    {
-        returnString << " LOAD ";
-    }
-    else
-    {
-        returnString << " STORE ";
-    }
-    returnString << effectiveAddress << " " << timeStamp;
-    return returnString.str();
 }

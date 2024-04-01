@@ -3,19 +3,28 @@
 namespace CacheHierarchySimulator
 {
 
-Core::Core()
+Core::Core(AddressSize addressSpace) : addressSpace(addressSpace)
 {
 
+}
+
+Core::Core(const Core& rhs) : Core(addressSpace)
+{
+    // Copy existing caches
+    for(const std::unique_ptr<CacheInterface>& cache : rhs.cacheList)
+    {
+        cacheList.push_back(cache->createInstance());
+    }
 }
 
 Core::~Core()
 {
-
+    cacheList.clear();
 }
 
-void Core::addCache(const Cache& cache)
+void Core::addCache(const CacheInterface& cache)
 {
-    cacheList.push_back(cache);
+    cacheList.push_back(cache.createInstance());
 }
 
 CoreResult Core::read(Address address)
@@ -28,13 +37,13 @@ CoreResult Core::read(Address address)
     };
 
     // For each cache in list
-    for(Cache& cache : cacheList)
+    for(std::unique_ptr<CacheInterface>& cache : cacheList)
     {
         // Add cache latency
-        cacheResult.latency += cache.getLatency();
+        cacheResult.latency += cache->getLatency();
 
         // Read from cache and determine if hit
-        if(cache.read(address))
+        if(cache->read(address))
         {
             cacheResult.cacheResult = CACHE_HIT;
             stats.readHits++;
@@ -53,12 +62,44 @@ CoreResult Core::read(Address address)
 
 CoreResult Core::write(Address address)
 {
-    
+    // Initialze result
+    CoreResult cacheResult
+    {
+        .cacheResult = CACHE_MISS,
+        .latency = 0
+    };
+
+    // For each cache in list
+    for(std::unique_ptr<CacheInterface>& cache : cacheList)
+    {
+        // Add cache latency
+        cacheResult.latency += cache->getLatency();
+
+        // Write to cache and determine if hit
+        if(cache->write(address))
+        {
+            cacheResult.cacheResult = CACHE_HIT;
+            stats.writeHits++;
+            break;
+        }
+    }
+
+    if(cacheResult.cacheResult == CACHE_MISS)
+    {
+        stats.writeMisses++;
+    }
+
+    // Return cache result
+    return cacheResult;
 }
 
 CoreStats Core::getStats()
 {
-    
+    CoreStats coreStats;
+    coreStats.totalCoreStats = stats;
+    // TODO: Calculate AMAT & get cache stats
+
+    return coreStats;
 }
 
 };

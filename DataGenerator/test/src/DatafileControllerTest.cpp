@@ -2,6 +2,7 @@
 #include "doctest.h"
 
 #include "DatafileController.h"
+#include "api.h"
 
 TEST_CASE("Add entries to the entry buffer")
 {
@@ -9,8 +10,8 @@ TEST_CASE("Add entries to the entry buffer")
     controller.setCurrentPid(0);
     controller.setExeName("data");
 
-    DatafileController::DatafileEntry entry1(1,1,1,1);
-    DatafileController::DatafileEntry entry2(2,0,2,2);
+    CacheHierarchySimulator::Instruction entry1(1,1,1,1);
+    CacheHierarchySimulator::Instruction entry2(2,0,2,2);
 
     SUBCASE("Add entry without flushing buffer")
     {
@@ -35,21 +36,18 @@ TEST_CASE("Add entries to the entry buffer")
         std::ifstream dataFile;
         dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
         CHECK(dataFile.is_open() == true);
-        uint64_t entryCount = 0;
-        dataFile.read((char*)&entryCount, sizeof(uint64_t));
-        CHECK(entryCount == 2);
-        DatafileController::DatafileEntry readEntry(0,0,0,0);
+        std::vector<CacheHierarchySimulator::Instruction> iList;
+        iList.resize(2);
 
-        dataFile.read((char*)&readEntry, sizeof(DatafileController::DatafileEntry));
-        CHECK(readEntry.effectiveAddress == 1);
-        CHECK(readEntry.load_or_store == 1);
-        CHECK(readEntry.pid == 1);
-        CHECK(readEntry.timeStamp == 1);
+        dataFile.read((char*)iList.data(), sizeof(CacheHierarchySimulator::Instruction)*2);
+        CHECK(iList[0].address == 1);
+        CHECK(iList[0].read_write == 1);
+        CHECK(iList[0].pid == 1);
+        CHECK(iList[0].cycleTime == 1);
 
-        dataFile.read((char*)&readEntry, sizeof(DatafileController::DatafileEntry));
-        CHECK(readEntry.effectiveAddress == 2);
-        CHECK(readEntry.load_or_store == 0);
-        CHECK(readEntry.pid == 2);
-        CHECK(readEntry.timeStamp == 2);
+        CHECK(iList[1].address == 2);
+        CHECK(iList[1].read_write == 0);
+        CHECK(iList[1].pid == 2);
+        CHECK(iList[1].cycleTime == 2);
     }
 }

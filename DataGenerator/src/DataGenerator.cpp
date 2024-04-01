@@ -7,6 +7,7 @@
 #include <string>
 
 #include "DatafileController.h"
+#include "api.h"
 #include "pin.H"
 
 // Global Output Stream
@@ -26,7 +27,7 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 ti
         dataFile.setCurrentPid(pid);
     }
 
-    DatafileController::DatafileEntry entry(pid, load_store, effectiveAddress, timeStamp);
+    CacheHierarchySimulator::Instruction entry(pid, load_store, effectiveAddress, timeStamp);
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
