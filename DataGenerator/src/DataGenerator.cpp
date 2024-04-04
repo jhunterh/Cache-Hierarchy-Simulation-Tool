@@ -31,7 +31,7 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeSta
     {
         .pid = (unsigned int) pid,
         .threadid = tid,
-        .read_write = isWrite,
+        .isWrite = isWrite,
         .address = effectiveAddress,
         .cycleTime = timeStamp
     };
