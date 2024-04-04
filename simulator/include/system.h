@@ -21,23 +21,23 @@ class System
 {
 public:
 
-    System(AddressSize addressSpace, Latency memoryLatency);
+    System(AddressSize addressSpace, CycleTime memoryLatency);
     ~System();
 
     void addCore(const Core& core);
-    void addSystemCache(const CacheInterface& cache);
+    void addSharedCache(const CacheInterface& cache);
 
-    Latency read(Address address);
-    Latency write(Address address);
+    AccessResult read(Address address);
+    AccessResult write(Address address);
 
     SystemStats getStats();
 
 private:
 
     std::vector<Core> coreList;
-    std::vector<std::unique_ptr<CacheInterface>> systemCacheList;
+    std::vector<std::unique_ptr<CacheInterface>> sharedCacheList;
 
-    Latency memoryLatency;
+    CycleTime memoryLatency;
     AddressSize addressSpace;
 
 };

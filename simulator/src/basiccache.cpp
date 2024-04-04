@@ -25,7 +25,7 @@ inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset f
     fieldOut = (addressIn >> fieldOffset) & fieldMask;
 }
 
-BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, Latency latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy) : 
+BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, CycleTime latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy) : 
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
     // Make sure cacheSize is divisible by blockSize
@@ -85,7 +85,7 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
     entryTable.resize(blockCount);
 
     // Create replacement policy instance
-    this->replacementPolicy = replacementPolicy.createPolicyInstance();
+    this->replacementPolicy = replacementPolicy.createInstance();
     this->replacementPolicy->initalize(indexSize, associativity);
 }
 
@@ -113,10 +113,10 @@ void BasicCache::initialize(AddressSize addressSize)
     }
 }
 
-CacheResult BasicCache::read(Address address)
+AccessResult BasicCache::read(Address address)
 {
-    CacheResult accessResult = this->access(address);
-    if(accessResult == CACHE_HIT)
+    AccessState accessState = this->access(address);
+    if(accessState == CACHE_HIT)
     {
         stats.readHits++;
     }
@@ -127,13 +127,17 @@ CacheResult BasicCache::read(Address address)
         // If cache miss, replace cache line
         replaceLine(address);
     }
-    return accessResult;
+
+    return AccessResult {
+        .accessState = accessState,
+        .accessLatency = latency
+    };
 }
 
-CacheResult BasicCache::write(Address address)
+AccessResult BasicCache::write(Address address)
 {
-    CacheResult accessResult = this->access(address);
-    if(accessResult == CACHE_HIT)
+    AccessState accessState = this->access(address);
+    if(accessState == CACHE_HIT)
     {
         stats.writeHits++;
         // If cache write hit, always write to cache
@@ -150,7 +154,10 @@ CacheResult BasicCache::write(Address address)
         }
     }
 
-    return accessResult;
+    return AccessResult {
+        .accessState = accessState,
+        .accessLatency = latency
+    };
 }
 
 void BasicCache::replaceLine(Address address)
@@ -165,17 +172,12 @@ void BasicCache::replaceLine(Address address)
     cacheEntry.valid = true;
 }
 
-Latency BasicCache::getLatency()
-{
-    return latency;
-}
-
 ModuleStats BasicCache::getStats()
 {
     return stats;
 }
 
-CacheResult BasicCache::access(Address address)
+AccessState BasicCache::access(Address address)
 {
     // Get cache parameters
     CacheFields fields = getFieldsFromAddress(address);

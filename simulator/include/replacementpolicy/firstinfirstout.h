@@ -14,7 +14,7 @@ class FirstInFirstOut : public PolicyInterface
 {
 public:
 
-    PolicyPtr createPolicyInstance() const;
+    PolicyPtr createInstance() const;
     void initalize(SetIndex setCount, AssociativitySize setLineSize);
     void countAccess(SetIndex setIdx, SetLineIdx entryIdx);
     SetLineIdx getNextReplacementIndex(SetIndex setIdx);

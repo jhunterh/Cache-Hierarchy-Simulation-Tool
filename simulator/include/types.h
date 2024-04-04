@@ -14,18 +14,18 @@ typedef uint32_t AssociativitySize;
 typedef AssociativitySize SetLineIdx;
 typedef uint16_t SetIndex;
 
-typedef uint32_t Latency;
+typedef uint64_t CycleTime;
 
-enum CacheResult
+enum AccessState
 {
     CACHE_MISS = 0,
     CACHE_HIT = 1
-};
+}; 
 
-struct CoreResult
+struct AccessResult
 {
-    CacheResult cacheResult;
-    Latency latency;
+    AccessState accessState;
+    CycleTime accessLatency;
 };
 
 struct ModuleStats
@@ -48,6 +48,7 @@ struct SystemStats
     ModuleStats totalSystemStats;
     uint64_t averageMemoryAccessTime = 0;
     std::vector<CoreStats> coreStats;
+    std::vector<ModuleStats> sharedCacheStats;
 };
 
 }
