@@ -40,7 +40,7 @@ VOID Instruction(INS ins, VOID *v)
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYREAD_EA,
-                       IARG_UINT32, 0,
+                       IARG_UINT32, AccessType::READ,
                        IARG_TSC,
                        IARG_END);
     }
@@ -49,7 +49,7 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYWRITE_EA,
-                       IARG_UINT32, 1,
+                       IARG_UINT32, AccessType::WRITE,
                        IARG_TSC,
                        IARG_END);
     }

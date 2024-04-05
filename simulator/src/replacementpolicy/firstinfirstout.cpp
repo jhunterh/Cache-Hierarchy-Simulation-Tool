@@ -17,6 +17,11 @@ void FirstInFirstOut::initalize(SetIndex setCount, AssociativitySize setLineSize
     nextIndexList.resize(setCount);
 }
 
+void FirstInFirstOut::reset()
+{
+    nextIndexList.clear();
+}
+
 void FirstInFirstOut::countAccess(SetIndex setIdx, SetLineIdx entryIdx)
 {
 

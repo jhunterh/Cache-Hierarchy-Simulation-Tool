@@ -20,6 +20,7 @@ public:
 
     virtual PolicyPtr createInstance() const = 0;
     virtual void initalize(SetIndex setCount, AssociativitySize setLineSize) = 0;
+    virtual void reset();
     virtual void countAccess(SetIndex setIdx, SetLineIdx entryIdx) = 0;
     virtual SetLineIdx getNextReplacementIndex(SetIndex setIdx) = 0;
 };

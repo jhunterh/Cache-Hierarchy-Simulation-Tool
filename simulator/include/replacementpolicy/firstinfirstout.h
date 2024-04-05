@@ -16,6 +16,7 @@ public:
 
     PolicyPtr createInstance() const;
     void initalize(SetIndex setCount, AssociativitySize setLineSize);
+    void reset();
     void countAccess(SetIndex setIdx, SetLineIdx entryIdx);
     SetLineIdx getNextReplacementIndex(SetIndex setIdx);
 
