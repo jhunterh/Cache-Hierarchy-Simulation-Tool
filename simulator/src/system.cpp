@@ -81,13 +81,13 @@ void System::simulate(const std::vector<Instruction>& instructionList)
 
         // Execute read or write
         // TODO: Possibly do something with read & write function outputs
-        if(instruction.read_write == AccessType::READ)
-        {
-            read(core, instruction.address);
-        }
-        else if(instruction.read_write == AccessType::WRITE)
+        if(instruction.isWrite)
         {
             write(core, instruction.address);
+        }
+        else
+        {
+            read(core, instruction.address);
         }
     }
 }
