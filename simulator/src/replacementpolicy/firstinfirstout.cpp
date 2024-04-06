@@ -6,7 +6,7 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
-PolicyPtr FirstInFirstOut::createPolicyInstance() const
+PolicyPtr FirstInFirstOut::createInstance() const
 {
     return PolicyPtr(new FirstInFirstOut());
 }

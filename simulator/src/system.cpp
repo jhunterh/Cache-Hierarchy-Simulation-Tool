@@ -3,7 +3,7 @@
 namespace CacheHierarchySimulator
 {
 
-System::System(AddressSize addressSpace, Latency memoryLatency) : addressSpace(addressSpace), memoryLatency(memoryLatency)
+System::System(AddressSize addressSpace, CycleTime memoryLatency) : addressSpace(addressSpace), memoryLatency(memoryLatency)
 {
 
 }
@@ -11,7 +11,7 @@ System::System(AddressSize addressSpace, Latency memoryLatency) : addressSpace(a
 System::~System()
 {
     coreList.clear();
-    systemCacheList.clear();
+    sharedCacheList.clear();
 }
 
 void System::addCore(const Core& core)
@@ -19,21 +19,21 @@ void System::addCore(const Core& core)
     coreList.push_back(core);
 }
 
-void System::addSystemCache(const CacheInterface& cache)
+void System::addSharedCache(const CacheInterface& cache)
 {
-    systemCacheList.push_back(cache.createInstance());
+    sharedCacheList.push_back(cache.createInstance());
 }
 
-Latency System::read(Address address)
+AccessResult System::read(Address address)
 {
     // TODO: Implement read
-    return 0;
+    return AccessResult();
 }
 
-Latency System::write(Address address)
+AccessResult System::write(Address address)
 {
     // TODO: Implement write
-    return 0;
+    return AccessResult();
 }
 
 SystemStats System::getStats()

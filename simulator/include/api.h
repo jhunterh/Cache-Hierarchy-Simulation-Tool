@@ -10,17 +10,10 @@ namespace CacheHierarchySimulator
 struct Instruction
 {
     uint32_t pid = 0;
-    uint8_t read_write = 0;
+    uint32_t threadid = 0;
+    uint8_t isWrite = 0; // 0 is load, 1 is store
     uint64_t address = 0;
     uint64_t cycleTime = 0;
-
-    Instruction() = default;
-
-    Instruction(uint32_t processid, uint8_t load_store, uint64_t address_, uint64_t time) :
-        pid(processid),
-        read_write(load_store), 
-        address(address_), 
-        cycleTime(time) {}
 };
 
 /**
@@ -42,7 +35,7 @@ public:
 
 private:
 
-    std::vector<System> systems;
+    std::vector<System> systemList;
 };
 
 }

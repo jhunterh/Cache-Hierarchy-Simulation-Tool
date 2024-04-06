@@ -27,70 +27,78 @@ void Core::addCache(const CacheInterface& cache)
     cacheList.push_back(cache.createInstance());
 }
 
-CoreResult Core::read(Address address)
+AccessResult Core::read(Address address)
 {
     // Initialze result
-    CoreResult cacheResult
+    AccessResult accessResult
     {
-        .cacheResult = CACHE_MISS,
-        .latency = 0
+        .accessState = CACHE_MISS,
+        .accessLatency = 0
     };
 
     // For each cache in list
     for(std::unique_ptr<CacheInterface>& cache : cacheList)
     {
+        // Read from cache
+        AccessResult result = cache->read(address);
+
         // Add cache latency
-        cacheResult.latency += cache->getLatency();
+        accessResult.accessLatency += result.accessLatency;
 
         // Read from cache and determine if hit
-        if(cache->read(address))
+        if(result.accessState == CACHE_HIT)
         {
-            cacheResult.cacheResult = CACHE_HIT;
+            accessResult.accessState = CACHE_HIT;
             stats.readHits++;
             break;
         }
     }
 
-    if(cacheResult.cacheResult == CACHE_MISS)
+    // If miss, log miss
+    if(accessResult.accessState == CACHE_MISS)
     {
         stats.readMisses++;
     }
 
     // Return cache result
-    return cacheResult;
+    return accessResult;
 }
 
-CoreResult Core::write(Address address)
+AccessResult Core::write(Address address)
 {
     // Initialze result
-    CoreResult cacheResult
+    AccessResult accessResult
     {
-        .cacheResult = CACHE_MISS,
-        .latency = 0
+        .accessState = CACHE_MISS,
+        .accessLatency = 0
     };
 
     // For each cache in list
     for(std::unique_ptr<CacheInterface>& cache : cacheList)
     {
-        // Add cache latency
-        cacheResult.latency += cache->getLatency();
+        // Write to cache
+        AccessResult result = cache->write(address);
 
-        // Write to cache and determine if hit
-        if(cache->write(address))
+        // Add cache latency
+        accessResult.accessLatency += result.accessLatency;
+
+        // Check if cache hit
+        if(result.accessState == CACHE_HIT)
         {
-            cacheResult.cacheResult = CACHE_HIT;
+            accessResult.accessState = CACHE_HIT;
             stats.writeHits++;
             break;
         }
     }
 
-    if(cacheResult.cacheResult == CACHE_MISS)
+    // If miss, log miss
+    if(accessResult.accessState == CACHE_MISS)
     {
         stats.writeMisses++;
     }
 
     // Return cache result
-    return cacheResult;
+    return accessResult;
 }
 
 CoreStats Core::getStats()

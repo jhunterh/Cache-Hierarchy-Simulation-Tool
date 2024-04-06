@@ -15,7 +15,7 @@ static PIN_MUTEX DatafileMutex;
 static DatafileController dataFile;
 
 // Called when load or store is encountered
-VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 timeStamp) 
+VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeStamp, THREADID tid) 
 {
     // Send LOAD/STORE to DatafileController
     PIN_MutexLock(&DatafileMutex);
@@ -27,7 +27,15 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, UINT32 load_store, UINT64 ti
         dataFile.setCurrentPid(pid);
     }
 
-    CacheHierarchySimulator::Instruction entry(pid, load_store, effectiveAddress, timeStamp);
+    CacheHierarchySimulator::Instruction entry = 
+    {
+        .pid = (unsigned int) pid,
+        .threadid = tid,
+        .isWrite = isWrite,
+        .address = effectiveAddress,
+        .cycleTime = timeStamp
+    };
+
     dataFile.addEntry(entry);
     PIN_MutexUnlock(&DatafileMutex);
 }
@@ -40,8 +48,9 @@ VOID Instruction(INS ins, VOID *v)
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYREAD_EA,
-                       IARG_UINT32, 0,
+                       IARG_BOOL, false,
                        IARG_TSC,
+                       IARG_THREAD_ID,
                        IARG_END);
     }
 
@@ -49,8 +58,9 @@ VOID Instruction(INS ins, VOID *v)
     if (INS_IsMemoryWrite(ins)) {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYWRITE_EA,
-                       IARG_UINT32, 1,
+                       IARG_BOOL, true,
                        IARG_TSC,
+                       IARG_THREAD_ID,
                        IARG_END);
     }
 }
