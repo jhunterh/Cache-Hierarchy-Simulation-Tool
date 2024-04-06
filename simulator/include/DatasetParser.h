@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "api.h"
+#include "instruction.h"
 
 namespace CacheHierarchySimulator
 {
