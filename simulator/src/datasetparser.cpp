@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <string>
 
-#include "DatasetParser.h"
+#include "datasetparser.h"
 
 namespace CacheHierarchySimulator
 {

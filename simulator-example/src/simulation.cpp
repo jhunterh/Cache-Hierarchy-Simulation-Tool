@@ -2,8 +2,8 @@
 
 #include "api.h"
 #include "basiccache.h"
-#include "DatasetParser.h"
-#include "ConfigParser.h"
+#include "datasetparser.h"
+#include "configparser.h"
 
 // Example simulation run
 int main(int argc, char** argv)
