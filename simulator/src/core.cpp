@@ -27,6 +27,14 @@ void Core::addCache(const CacheInterface& cache)
     cacheList.push_back(cache.createInstance());
 }
 
+void Core::reset()
+{
+    for(std::unique_ptr<CacheInterface>& cache : cacheList)
+    {
+        cache->reset();
+    }
+}
+
 AccessResult Core::read(Address address)
 {
     // Initialze result
@@ -101,11 +109,16 @@ AccessResult Core::write(Address address)
     return accessResult;
 }
 
-CoreStats Core::getStats()
+CoreStats Core::getStats() const
 {
     CoreStats coreStats;
     coreStats.totalCoreStats = stats;
-    // TODO: Calculate AMAT & get cache stats
+
+    coreStats.cacheStats.reserve(cacheList.size());
+    for(const std::unique_ptr<CacheInterface>& cache : cacheList)
+    {
+        coreStats.cacheStats.push_back(cache->getStats());
+    }
 
     return coreStats;
 }

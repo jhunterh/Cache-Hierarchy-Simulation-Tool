@@ -20,6 +20,8 @@ public:
     std::unique_ptr<CacheInterface> createInstance() const;
     void initialize(AddressSize addressSize);
 
+    void reset();
+
     AccessResult read(Address address);
     AccessResult write(Address address);
 

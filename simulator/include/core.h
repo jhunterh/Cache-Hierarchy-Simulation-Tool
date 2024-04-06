@@ -24,10 +24,12 @@ public:
 
     void addCache(const CacheInterface& cache);
 
+    void reset();
+
     AccessResult read(Address address);
     AccessResult write(Address address);
 
-    CoreStats getStats();
+    CoreStats getStats() const;
 
 private:
 

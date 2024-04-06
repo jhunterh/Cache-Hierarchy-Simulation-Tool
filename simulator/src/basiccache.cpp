@@ -113,6 +113,12 @@ void BasicCache::initialize(AddressSize addressSize)
     }
 }
 
+void BasicCache::reset()
+{
+    entryTable.clear();
+    replacementPolicy->reset();
+}
+
 AccessResult BasicCache::read(Address address)
 {
     AccessState accessState = this->access(address);
