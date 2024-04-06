@@ -9,8 +9,8 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
-static const FirstInFirstOut FIFO;
-static const LastInFirstOut LIFO;
+//static const FirstInFirstOut FIFO;
+//static const LastInFirstOut LIFO;
 
 }
 

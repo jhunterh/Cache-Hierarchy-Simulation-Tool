@@ -38,13 +38,13 @@ public:
 
 private:
 
-    AccessResult System::read(Core& core, Address address);
-    AccessResult System::write(Core& core, Address address);
+    AccessResult read(Core& core, Address address);
+    AccessResult write(Core& core, Address address);
 
     ModuleStats stats;
 
     std::vector<Core> coreList;
-    std::vector<std::unique_ptr<CacheInterface>> sharedCacheList;
+    std::vector<std::shared_ptr<CacheInterface>> sharedCacheList;
 
     CycleTime memoryLatency;
     AddressSize addressSpace;

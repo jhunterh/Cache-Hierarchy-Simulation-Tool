@@ -1,6 +1,6 @@
 .PHONY: clean all Simulator SimulatorExample BuildTests RunTests
 
-INCLUDES = -Isimulator/include -Isimulator/include/replacementpolicy -IDataGenerator/include
+INCLUDES = -Isimulator/include -Isimulator/include/replacementpolicy
 LIBS = -Lsimulator/lib -lsimulator -lstdc++fs 
 
 DataGeneratorTool:

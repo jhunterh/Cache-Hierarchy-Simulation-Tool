@@ -1,11 +1,20 @@
+#include <iostream>
+
 #include "api.h"
 #include "basiccache.h"
+#include "DatasetParser.h"
+#include "ConfigParser.h"
 
-// Example simulation run (with no instructions)
-int main(int argv, char* argc)
+// Example simulation run
+int main(int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cout << "Usage: ./SimulatorExample <config file>" << std::endl;
+        return 1;
+    }
     // Api instantiation
-    CacheHierarchySimulator::Api api;
+    /*CacheHierarchySimulator::Api api;
 
     // Create an l1 cache
     size_t addressSize = 64;
@@ -27,10 +36,12 @@ int main(int argv, char* argc)
     // Add the system to the api
     api.addSystem(system);
 
-    std::vector<CacheHierarchySimulator::Instruction> instructionList;
+    // get instruction trace
+    std::vector<CacheHierarchySimulator::Instruction> instructionList = CacheHierarchySimulator::parseInstructionList();
 
     // Run the simulation
-    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
+    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList); */
+    CacheHierarchySimulator::System system = CacheHierarchySimulator::parseConfigFile(argv[1]);
 
     return 0;
 }

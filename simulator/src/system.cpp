@@ -59,7 +59,7 @@ void System::reset()
         core.reset();
     }
 
-    for(std::unique_ptr<CacheInterface>& cache : sharedCacheList)
+    for(std::shared_ptr<CacheInterface>& cache : sharedCacheList)
     {
         cache->reset();
     }
@@ -103,7 +103,7 @@ AccessResult System::read(Core& core, Address address)
         // If cache miss, then search in shared caches
         
         // For each shared cache in list
-        for(std::unique_ptr<CacheInterface>& cache : sharedCacheList)
+        for(std::shared_ptr<CacheInterface>& cache : sharedCacheList)
         {
             // Read from cache
             AccessResult result = cache->read(address);
@@ -148,7 +148,7 @@ AccessResult System::write(Core& core, Address address)
         // If cache miss, then search in shared caches
 
         // For each shared cache in list
-        for(std::unique_ptr<CacheInterface>& cache : sharedCacheList)
+        for(std::shared_ptr<CacheInterface>& cache : sharedCacheList)
         {
             // Write to cache
             AccessResult result = cache->write(address);
