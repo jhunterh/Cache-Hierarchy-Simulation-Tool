@@ -1,6 +1,8 @@
 #ifndef CHS_POLICY_LIST_H
 #define CHS_POLICY_LIST_H
 
+#include <string>
+
 #include "firstinfirstout.h"
 #include "lastinfirstout.h" 
 namespace CacheHierarchySimulator
@@ -9,8 +11,8 @@ namespace CacheHierarchySimulator
 namespace ReplacementPolicy
 {
 
-//static const FirstInFirstOut FIFO;
-//static const LastInFirstOut LIFO;
+static const FirstInFirstOut FIFO;
+static const LastInFirstOut LIFO;
 
 }
 

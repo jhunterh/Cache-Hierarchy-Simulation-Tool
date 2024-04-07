@@ -13,7 +13,7 @@ namespace ReplacementPolicy
 class LastInFirstOut : public PolicyInterface
 {
 public:
-
+    LastInFirstOut() {}
     PolicyPtr createInstance() const;
     void initalize(SetIndex setCount, AssociativitySize setLineSize);
     void reset();

@@ -12,15 +12,14 @@ namespace ReplacementPolicy
 
 class PolicyInterface; // forward declaration
 
-typedef std::unique_ptr<PolicyInterface> PolicyPtr;
+typedef std::shared_ptr<PolicyInterface> PolicyPtr;
 
 class PolicyInterface
 {
 public:
-
     virtual PolicyPtr createInstance() const = 0;
     virtual void initalize(SetIndex setCount, AssociativitySize setLineSize) = 0;
-    virtual void reset();
+    virtual void reset() = 0;
     virtual void countAccess(SetIndex setIdx, SetLineIdx entryIdx) = 0;
     virtual SetLineIdx getNextReplacementIndex(SetIndex setIdx) = 0;
 };

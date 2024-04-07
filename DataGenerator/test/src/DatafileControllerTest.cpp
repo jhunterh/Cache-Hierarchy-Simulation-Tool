@@ -2,7 +2,6 @@
 #include "doctest.h"
 
 #include "DatafileController.h"
-#include "api.h"
 
 TEST_CASE("Add entries to the entry buffer")
 {
