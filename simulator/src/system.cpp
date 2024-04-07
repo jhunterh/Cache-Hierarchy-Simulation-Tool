@@ -1,5 +1,7 @@
 #include "system.h"
 
+#include <iostream>
+
 namespace CacheHierarchySimulator
 {
 
@@ -68,10 +70,8 @@ void System::reset()
 
 void System::simulate(const std::vector<Instruction>& instructionList)
 {
-    // TODO: Possibly account for cycle time?
-    // Should we assume all instructions are sorted by cycle time?
-
-
+    // All instructions are already sorted by cycle time
+    std::cout << "Starting Simulation for system." << std::endl;
     for(const Instruction& instruction : instructionList)
     {   
         // Use pid to get core

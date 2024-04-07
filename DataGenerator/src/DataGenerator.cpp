@@ -7,7 +7,6 @@
 #include <string>
 
 #include "DatafileController.h"
-#include "api.h"
 #include "pin.H"
 
 // Global Output Stream

@@ -33,8 +33,6 @@ void Api::resetSystemState()
 
 std::vector<SystemStats> Api::runSimulation(std::vector<Instruction> instructionList)
 {
-    // TODO: Add way to sort instructions by cycles
-
     // Simulate system by system
     for(System& system : systemList)
     {

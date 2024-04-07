@@ -14,34 +14,21 @@ int main(int argc, char** argv)
         return 1;
     }
     // Api instantiation
-    /*CacheHierarchySimulator::Api api;
-
-    // Create an l1 cache
-    size_t addressSize = 64;
-    CacheHierarchySimulator::BasicCache l1(addressSize, 8192, 64, 4, 5, CacheHierarchySimulator::WRITE_ALLOCATE, CacheHierarchySimulator::ReplacementPolicy::FIFO);
-
-    // Create a new core
-    CacheHierarchySimulator::Core core(addressSize);
-
-    // Add cache to core
-    core.addCache(l1);
-    
-    // Create system and add 4 cores of the same type
-    CacheHierarchySimulator::System system(addressSize, 10);
-    system.addCore(core);
-    system.addCore(core);
-    system.addCore(core);
-    system.addCore(core);
+    CacheHierarchySimulator::Api api;
 
     // Add the system to the api
-    api.addSystem(system);
+    std::cout << "Reading Configuration File..." << std::endl;
+    api.addSystem(CacheHierarchySimulator::parseConfigFile(argv[1]));
+    std::cout << "System Configured!" << std::endl;
 
     // get instruction trace
+    std::cout << "Loading Dataset..." << std::endl;
     std::vector<CacheHierarchySimulator::Instruction> instructionList = CacheHierarchySimulator::parseInstructionList();
+    std::cout << "Dataset Loaded!" << std::endl;
 
     // Run the simulation
-    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList); */
-    CacheHierarchySimulator::System system = CacheHierarchySimulator::parseConfigFile(argv[1]);
+    std::cout << "Starting Simulation." << std::endl;
+    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
 
     return 0;
 }
