@@ -36,7 +36,7 @@ size_t System::getCoreIdFromPid(uint32_t pid)
     size_t coreId = 0;
     if(pidToCoreMap.count(pid) > 0)
     {
-        coreId = pidToCoreMap.at(coreId);
+        coreId = pidToCoreMap.at(pid);
     }
     else
     {
@@ -45,7 +45,7 @@ size_t System::getCoreIdFromPid(uint32_t pid)
         pidToCoreMap.insert(std::pair<uint32_t, size_t>(pid, coreId));
 
         nextCoreId++;
-        if(nextCoreId < coreList.size())
+        if(nextCoreId >= coreList.size())
         {
             nextCoreId = 0;
         }
