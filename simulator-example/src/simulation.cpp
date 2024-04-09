@@ -30,5 +30,44 @@ int main(int argc, char** argv)
     std::cout << "Starting Simulation." << std::endl;
     std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
 
+    for (auto& stat : stats)
+    {
+        for (auto& coreStat : stat.coreStats)
+        {
+            for (auto& cacheStat : coreStat.cacheStats)
+            {
+                std::cout << "L1 Cache Stats" << std::endl;
+                std::cout << "L1 Cache averageMemoryAccessTime " << cacheStat.averageMemoryAccessTime << std::endl;
+                std::cout << "L1 Cache readHits " << cacheStat.readHits << std::endl;
+                std::cout << "L1 Cache readMisses " << cacheStat.readMisses << std::endl;
+                std::cout << "L1 Cache writeHits " << cacheStat.writeHits << std::endl;
+                std::cout << "L1 Cache writeMisses " << cacheStat.writeMisses << std::endl << std::endl;
+            }
+            std::cout << "Core Stats" << std::endl;
+            std::cout << "Core averageMemoryAccessTime " << coreStat.totalCoreStats.averageMemoryAccessTime << std::endl;
+            std::cout << "Core readHits " << coreStat.totalCoreStats.readHits << std::endl;
+            std::cout << "Core readMisses " << coreStat.totalCoreStats.readMisses << std::endl;
+            std::cout << "Core writeHits " << coreStat.totalCoreStats.writeHits << std::endl;
+            std::cout << "Core writeMisses " << coreStat.totalCoreStats.writeMisses << std::endl << std::endl;
+        }
+
+        for (auto& cacheStat : stat.sharedCacheStats)
+        {
+            std::cout << "Shared Cache Stats" << std::endl;
+            std::cout << "Shared Cache averageMemoryAccessTime " << cacheStat.averageMemoryAccessTime << std::endl;
+            std::cout << "Shared Cache readHits " << cacheStat.readHits << std::endl;
+            std::cout << "Shared Cache readMisses " << cacheStat.readMisses << std::endl;
+            std::cout << "Shared Cache writeHits " << cacheStat.writeHits << std::endl;
+            std::cout << "Shared Cache writeMisses " << cacheStat.writeMisses << std::endl << std::endl;
+        }
+
+        std::cout << "System Stats" << std::endl;
+        std::cout << "System averageMemoryAccessTime " << stat.totalSystemStats.averageMemoryAccessTime << std::endl;
+        std::cout << "System readHits " << stat.totalSystemStats.readHits << std::endl;
+        std::cout << "System readMisses " << stat.totalSystemStats.readMisses << std::endl;
+        std::cout << "System writeHits " << stat.totalSystemStats.writeHits << std::endl;
+        std::cout << "System writeMisses " << stat.totalSystemStats.writeMisses << std::endl << std::endl;
+    }
+
     return 0;
 }
