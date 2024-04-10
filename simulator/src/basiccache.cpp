@@ -29,7 +29,7 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
     // Make sure cacheSize is divisible by blockSize
-    if(!(cacheSize % blockSize))
+    if(cacheSize % blockSize)
     {
         // cacheSize is not divsible by blockSize, throw error
         throw InvalidCacheSizeException();
@@ -111,6 +111,12 @@ void BasicCache::initialize(AddressSize addressSize)
     {
         throw MismatchedAddressSpaceException();
     }
+}
+
+void BasicCache::reset()
+{
+    entryTable.clear();
+    replacementPolicy->reset();
 }
 
 AccessResult BasicCache::read(Address address)

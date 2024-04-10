@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <cstdint>
 
-#include "api.h"
+#include "instruction.h"
 
 class DatafileController {
 public:

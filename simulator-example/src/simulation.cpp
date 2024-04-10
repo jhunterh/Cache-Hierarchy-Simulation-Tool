@@ -1,36 +1,73 @@
+#include <iostream>
+
 #include "api.h"
 #include "basiccache.h"
+#include "datasetparser.h"
+#include "configparser.h"
 
-// Example simulation run (with no instructions)
-int main(int argv, char* argc)
+// Example simulation run
+int main(int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cout << "Usage: ./SimulatorExample <config file>" << std::endl;
+        return 1;
+    }
     // Api instantiation
     CacheHierarchySimulator::Api api;
 
-    // Create an l1 cache
-    size_t addressSize = 64;
-    CacheHierarchySimulator::BasicCache l1(addressSize, 8192, 64, 4, 5, CacheHierarchySimulator::WRITE_ALLOCATE, CacheHierarchySimulator::ReplacementPolicy::FIFO);
-
-    // Create a new core
-    CacheHierarchySimulator::Core core(addressSize);
-
-    // Add cache to core
-    core.addCache(l1);
-    
-    // Create system and add 4 cores of the same type
-    CacheHierarchySimulator::System system(addressSize, 10);
-    system.addCore(core);
-    system.addCore(core);
-    system.addCore(core);
-    system.addCore(core);
-
     // Add the system to the api
-    api.addSystem(system);
+    std::cout << "Reading Configuration File..." << std::endl;
+    api.addSystem(CacheHierarchySimulator::parseConfigFile(argv[1]));
+    std::cout << "System Configured!" << std::endl;
 
-    std::vector<CacheHierarchySimulator::Instruction> instructionList;
+    // get instruction trace
+    std::cout << "Loading Dataset..." << std::endl;
+    std::vector<CacheHierarchySimulator::Instruction> instructionList = CacheHierarchySimulator::parseInstructionList();
+    std::cout << "Dataset Loaded!" << std::endl;
 
     // Run the simulation
+    std::cout << "Starting Simulation." << std::endl;
     std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
+
+    for (auto& stat : stats)
+    {
+        for (auto& coreStat : stat.coreStats)
+        {
+            for (auto& cacheStat : coreStat.cacheStats)
+            {
+                std::cout << "L1 Cache Stats" << std::endl;
+                std::cout << "L1 Cache averageMemoryAccessTime " << cacheStat.averageMemoryAccessTime << std::endl;
+                std::cout << "L1 Cache readHits " << cacheStat.readHits << std::endl;
+                std::cout << "L1 Cache readMisses " << cacheStat.readMisses << std::endl;
+                std::cout << "L1 Cache writeHits " << cacheStat.writeHits << std::endl;
+                std::cout << "L1 Cache writeMisses " << cacheStat.writeMisses << std::endl << std::endl;
+            }
+            std::cout << "Core Stats" << std::endl;
+            std::cout << "Core averageMemoryAccessTime " << coreStat.totalCoreStats.averageMemoryAccessTime << std::endl;
+            std::cout << "Core readHits " << coreStat.totalCoreStats.readHits << std::endl;
+            std::cout << "Core readMisses " << coreStat.totalCoreStats.readMisses << std::endl;
+            std::cout << "Core writeHits " << coreStat.totalCoreStats.writeHits << std::endl;
+            std::cout << "Core writeMisses " << coreStat.totalCoreStats.writeMisses << std::endl << std::endl;
+        }
+
+        for (auto& cacheStat : stat.sharedCacheStats)
+        {
+            std::cout << "Shared Cache Stats" << std::endl;
+            std::cout << "Shared Cache averageMemoryAccessTime " << cacheStat.averageMemoryAccessTime << std::endl;
+            std::cout << "Shared Cache readHits " << cacheStat.readHits << std::endl;
+            std::cout << "Shared Cache readMisses " << cacheStat.readMisses << std::endl;
+            std::cout << "Shared Cache writeHits " << cacheStat.writeHits << std::endl;
+            std::cout << "Shared Cache writeMisses " << cacheStat.writeMisses << std::endl << std::endl;
+        }
+
+        std::cout << "System Stats" << std::endl;
+        std::cout << "System averageMemoryAccessTime " << stat.totalSystemStats.averageMemoryAccessTime << std::endl;
+        std::cout << "System readHits " << stat.totalSystemStats.readHits << std::endl;
+        std::cout << "System readMisses " << stat.totalSystemStats.readMisses << std::endl;
+        std::cout << "System writeHits " << stat.totalSystemStats.writeHits << std::endl;
+        std::cout << "System writeMisses " << stat.totalSystemStats.writeMisses << std::endl << std::endl;
+    }
 
     return 0;
 }

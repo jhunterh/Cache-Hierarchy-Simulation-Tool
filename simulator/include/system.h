@@ -5,6 +5,9 @@
 #include <vector>
 #include <memory>
 
+#include <unordered_map>
+
+#include "instruction.h"
 #include "types.h"
 #include "core.h"
 #include "cacheinterface.h"
@@ -27,18 +30,29 @@ public:
     void addCore(const Core& core);
     void addSharedCache(const CacheInterface& cache);
 
-    AccessResult read(Address address);
-    AccessResult write(Address address);
+    void reset();
 
-    SystemStats getStats();
+    void simulate(const std::vector<Instruction>& instructionList);
+
+    SystemStats getStats() const;
 
 private:
 
+    AccessResult read(Core& core, Address address);
+    AccessResult write(Core& core, Address address);
+
+    ModuleStats stats;
+
     std::vector<Core> coreList;
-    std::vector<std::unique_ptr<CacheInterface>> sharedCacheList;
+    std::vector<std::shared_ptr<CacheInterface>> sharedCacheList;
 
     CycleTime memoryLatency;
     AddressSize addressSpace;
+
+    // TODO: Add custom scheduler policies
+    size_t nextCoreId;
+    std::unordered_map<uint32_t, size_t> pidToCoreMap;
+    size_t getCoreIdFromPid(uint32_t pid);
 
 };
 

@@ -13,12 +13,16 @@ class BasicCache : public CacheInterface
 {
 public:
 
-    BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, CycleTime latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy);
+    BasicCache(AddressSize addressSize, CacheSize cacheSize, 
+                BlockSize blockSize, AssociativitySize associativity, CycleTime latency, 
+                WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy);
     BasicCache(const BasicCache& rhs);
     ~BasicCache();
 
     std::unique_ptr<CacheInterface> createInstance() const;
     void initialize(AddressSize addressSize);
+
+    void reset();
 
     AccessResult read(Address address);
     AccessResult write(Address address);

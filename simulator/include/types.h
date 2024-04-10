@@ -34,19 +34,18 @@ struct ModuleStats
     uint64_t readMisses = 0;
     uint64_t writeHits = 0;
     uint64_t writeMisses = 0;
+    double averageMemoryAccessTime = 0;
 };
 
 struct CoreStats
 {
     ModuleStats totalCoreStats;
-    uint64_t averageMemoryAccessTime = 0;
     std::vector<ModuleStats> cacheStats;  
 };
 
 struct SystemStats
 {
     ModuleStats totalSystemStats;
-    uint64_t averageMemoryAccessTime = 0;
     std::vector<CoreStats> coreStats;
     std::vector<ModuleStats> sharedCacheStats;
 };
