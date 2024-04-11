@@ -19,7 +19,9 @@ void LastInFirstOut::initalize(SetIndex setCount, AssociativitySize setLineSize)
 
 void LastInFirstOut::reset()
 {
+    size_t setCount = nextIndexList.size();
     nextIndexList.clear();
+    nextIndexList.resize(setCount);
 }
 
 void LastInFirstOut::countAccess(SetIndex setIdx, SetLineIdx entryIdx)
