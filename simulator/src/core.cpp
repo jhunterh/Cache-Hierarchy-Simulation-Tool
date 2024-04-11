@@ -8,7 +8,7 @@ Core::Core(AddressSize addressSpace) : addressSpace(addressSpace)
 
 }
 
-Core::Core(const Core& rhs) : Core(addressSpace)
+Core::Core(const Core& rhs) : Core(rhs.addressSpace)
 {
     // Copy existing caches
     for(const std::unique_ptr<CacheInterface>& cache : rhs.cacheList)

@@ -17,6 +17,7 @@ typedef std::shared_ptr<PolicyInterface> PolicyPtr;
 class PolicyInterface
 {
 public:
+    virtual ~PolicyInterface() {};
     virtual PolicyPtr createInstance() const = 0;
     virtual void initalize(SetIndex setCount, AssociativitySize setLineSize) = 0;
     virtual void reset() = 0;

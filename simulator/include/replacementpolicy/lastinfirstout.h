@@ -14,6 +14,7 @@ class LastInFirstOut : public PolicyInterface
 {
 public:
     LastInFirstOut() {}
+    ~LastInFirstOut();
     PolicyPtr createInstance() const;
     void initalize(SetIndex setCount, AssociativitySize setLineSize);
     void reset();

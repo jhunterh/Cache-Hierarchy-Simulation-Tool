@@ -5,6 +5,11 @@ namespace CacheHierarchySimulator
 
 namespace ReplacementPolicy
 {
+
+LastInFirstOut::~LastInFirstOut()
+{
+    nextIndexList.clear();
+}
     
 PolicyPtr LastInFirstOut::createInstance() const
 {
@@ -26,7 +31,8 @@ void LastInFirstOut::reset()
 
 void LastInFirstOut::countAccess(SetIndex setIdx, SetLineIdx entryIdx)
 {
-
+    (void) setIdx;
+    (void) entryIdx;
 }
 
 SetLineIdx LastInFirstOut::getNextReplacementIndex(SetIndex setIdx)
