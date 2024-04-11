@@ -35,16 +35,15 @@ private:
     void replaceLine(Address address);
     CacheFields getFieldsFromAddress(Address address);
 
-    CycleTime latency;
-    WritePolicy writePolicy;
-    ModuleStats stats;
-
     AddressSize addressSize;
     CacheSize cacheSize;
     BlockSize blockSize;
     AssociativitySize associativity;
-
+    CycleTime latency;
+    WritePolicy writePolicy;
     ReplacementPolicy::PolicyPtr replacementPolicy;
+
+    ModuleStats stats;
 
     AddressMask tagMask;
     AddressMask indexMask;
