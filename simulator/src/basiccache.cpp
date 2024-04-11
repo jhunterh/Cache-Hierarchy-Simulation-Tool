@@ -28,6 +28,14 @@ inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset f
 BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, CycleTime latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy) : 
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
+    // TODO: Either add more exceptions or add exception messages
+
+    // Check address size
+    if(sizeof(size_t) > addressSize || addressSize == 0)
+    {
+        throw InvalidAddressSizeException();
+    }
+
     // Make sure cacheSize is divisible by blockSize
     if(cacheSize % blockSize)
     {
@@ -35,23 +43,17 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
         throw InvalidCacheSizeException();
     }
 
-    if(addressSize == 0)
-    {
-        throw InvalidAddressSizeException();
-    }
-
-    // Check
-    if(sizeof(size_t) > addressSize)
-    {
-        throw InvalidAddressSizeException();
-    }
-
-    if(!isPowerOfTwo(blockSize))
+    if(!(isPowerOfTwo(blockSize) && blockSize <= cacheSize))
     {
         throw InvalidBlockSizeException();
     }
 
     if(!isPowerOfTwo(associativity))
+    {  
+        throw InvalidAssociativitySizeException();
+    }
+
+    if(associativity == 0 || associativity > cacheSize)
     {  
         throw InvalidAssociativitySizeException();
     }
