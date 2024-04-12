@@ -81,7 +81,7 @@ SANITY_SUBSET := $(TEST_TOOL_ROOTS) $(TEST_ROOTS)
 #
 ##############################################################
 
-TOOL_CXXFLAGS += -Iinclude -I../simulator/include -I../simulator/include/replacementpolicy
+TOOL_CXXFLAGS += -Iinclude -I../simulator/include -I../simulator/include/replacementpolicy -I../third_party
 SRCS = $(wildcard src/*.cpp)
 OBJS = $(patsubst src/%.cpp, $(OBJDIR)%$(OBJ_SUFFIX), $(SRCS))
 

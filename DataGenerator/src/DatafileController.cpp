@@ -2,6 +2,9 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #include "DatafileController.h"
 
@@ -9,16 +12,15 @@
 
 DatafileController::DatafileController()
 {
-    uint32_t coreCount = std::thread::hardware_concurrency();
-    std::string filename("data/cores.json");
-
-    m_outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (!m_outFile.is_open())
+    json outData;
+    outData["core_count"] = std::thread::hardware_concurrency();
+    std::ofstream outFile("data/cores.json");
+    if (!outFile.is_open())
     {
-        std::cerr << "Failed to open output file!" << std::endl;
+        std::cerr << "Failed to open output file for cores config!" << std::endl;
     }
-    m_outFile.write(reinterpret_cast<char*>(&coreCount), sizeof(uint32_t));
-    m_outFile.close();
+    outFile << std::setw(4) << outData << std::endl;
+    outFile.close();
 }
 
 void DatafileController::flushEntryBufferToFile()
@@ -30,14 +32,15 @@ void DatafileController::flushEntryBufferToFile()
     filename.append("_");
     filename.append(std::to_string(m_fileIdx++));
     filename.append(".dat");
-    m_outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (!m_outFile.is_open())
+    std::ofstream outFile;
+    outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (!outFile.is_open())
     {
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    m_outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(CacheHierarchySimulator::Instruction));
-    m_outFile.close();
+    outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(CacheHierarchySimulator::Instruction));
+    outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0;
@@ -73,7 +76,6 @@ void DatafileController::setCurrentPid(pid_t newPid)
     m_currentPid = newPid;
 
     // reset datafile parameters and entry buffer
-    if (m_outFile.is_open()) m_outFile.close();
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0; 
