@@ -40,17 +40,18 @@ private:
 
     AccessResult read(Core& core, Address address);
     AccessResult write(Core& core, Address address);
+    
+    AddressSize addressSpace;
+    CycleTime memoryLatency;
+    size_t nextCoreId;
 
     ModuleStats stats;
 
     std::vector<Core> coreList;
     std::vector<std::shared_ptr<CacheInterface>> sharedCacheList;
 
-    CycleTime memoryLatency;
-    AddressSize addressSpace;
 
     // TODO: Add custom scheduler policies
-    size_t nextCoreId;
     std::unordered_map<uint32_t, size_t> pidToCoreMap;
     size_t getCoreIdFromPid(uint32_t pid);
 

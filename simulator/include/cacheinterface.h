@@ -53,6 +53,8 @@ class CacheInterface
 {
 public:
 
+    virtual ~CacheInterface() {};
+
     virtual std::unique_ptr<CacheInterface> createInstance() const = 0;
     virtual void initialize(AddressSize addressSize) = 0;
 

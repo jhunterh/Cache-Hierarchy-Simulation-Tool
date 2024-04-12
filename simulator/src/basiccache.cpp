@@ -11,7 +11,7 @@ inline bool isPowerOfTwo(uint64_t num)
 
 inline uint64_t fastLog2(uint64_t num)
 {
-    return __builtin_ctzl(num);
+    return static_cast<uint64_t>(__builtin_ctzl(num));
 }
 
 inline uint64_t setNBits(uint64_t numBits)
@@ -20,14 +20,22 @@ inline uint64_t setNBits(uint64_t numBits)
 }
 
 template <class T>
-inline void getFieldFromAddress(T fieldOut, AddressMask fieldMask, FieldOffset fieldOffset, Address addressIn)
+inline void getFieldFromAddress(T& fieldOut, AddressMask fieldMask, FieldOffset fieldOffset, Address addressIn)
 {
-    fieldOut = (addressIn >> fieldOffset) & fieldMask;
+    fieldOut = static_cast<T>((addressIn >> fieldOffset) & fieldMask);
 }
 
 BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize blockSize, AssociativitySize associativity, CycleTime latency, WritePolicy writePolicy, const ReplacementPolicy::PolicyInterface& replacementPolicy) : 
         addressSize(addressSize), cacheSize(cacheSize), blockSize(blockSize), associativity(associativity), latency(latency), writePolicy(writePolicy)
 {
+    // TODO: Either add more exceptions or add exception messages
+
+    // Check address size
+    if((sizeof(size_t)*8) < addressSize || addressSize == 0)
+    {
+        throw InvalidAddressSizeException();
+    }
+
     // Make sure cacheSize is divisible by blockSize
     if(cacheSize % blockSize)
     {
@@ -35,23 +43,17 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
         throw InvalidCacheSizeException();
     }
 
-    if(addressSize == 0)
-    {
-        throw InvalidAddressSizeException();
-    }
-
-    // Check
-    if(sizeof(size_t) > addressSize)
-    {
-        throw InvalidAddressSizeException();
-    }
-
-    if(!isPowerOfTwo(blockSize))
+    if(!(isPowerOfTwo(blockSize) && blockSize <= cacheSize))
     {
         throw InvalidBlockSizeException();
     }
 
     if(!isPowerOfTwo(associativity))
+    {  
+        throw InvalidAssociativitySizeException();
+    }
+
+    if(associativity == 0 || associativity > cacheSize)
     {  
         throw InvalidAssociativitySizeException();
     }
@@ -76,10 +78,6 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
     // Calculate offsets
     indexOffset = offsetSize;
     tagOffset = indexSize + offsetSize;
-
-    // Add index offset for set associativity
-    indexMask << associativity;
-    indexOffset -= associativity;
 
     // Resize CacheEntry table
     entryTable.resize(blockCount);
@@ -115,7 +113,10 @@ void BasicCache::initialize(AddressSize addressSize)
 
 void BasicCache::reset()
 {
+    size_t entryTableSize = entryTable.size();
     entryTable.clear();
+    entryTable.resize(entryTableSize);
+
     replacementPolicy->reset();
 }
 
@@ -153,7 +154,7 @@ AccessResult BasicCache::write(Address address)
         stats.writeMisses++;
 
         // If cache write miss, use write policy
-        if(WritePolicy::WRITE_ALLOCATE)
+        if(writePolicy == WritePolicy::WRITE_ALLOCATE)
         {
             // If write allocate, replace line
             replaceLine(address);
@@ -172,7 +173,7 @@ void BasicCache::replaceLine(Address address)
 
     SetLineIdx entryIdx = replacementPolicy->getNextReplacementIndex(fields.index);
 
-    CacheEntry& cacheEntry = entryTable.at(fields.index + entryIdx);
+    CacheEntry& cacheEntry = entryTable.at(fields.index * associativity + entryIdx);
 
     cacheEntry.tag = fields.tag;
     cacheEntry.valid = true;
@@ -189,7 +190,8 @@ AccessState BasicCache::access(Address address)
     CacheFields fields = getFieldsFromAddress(address);
 
     // Iterate through set
-    for(size_t entryIdx = fields.index; entryIdx < (fields.index + associativity); entryIdx++)
+    size_t startIdx = fields.index * associativity;
+    for(size_t entryIdx = startIdx; entryIdx < (startIdx + associativity); entryIdx++)
     {
         CacheEntry& cacheEntry = entryTable.at(entryIdx);
 
