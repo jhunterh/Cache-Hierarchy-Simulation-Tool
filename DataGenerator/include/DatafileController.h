@@ -10,6 +10,8 @@
 
 class DatafileController {
 public:
+    DatafileController();
+
     void addEntry(CacheHierarchySimulator::Instruction entry);
 
     pid_t getCurrentPid();

@@ -1,10 +1,25 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 #include "DatafileController.h"
 
 #define MAX_ENTRY_COUNT 60000000
+
+DatafileController::DatafileController()
+{
+    uint32_t coreCount = std::thread::hardware_concurrency();
+    std::string filename("data/cores.json");
+
+    m_outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+    if (!m_outFile.is_open())
+    {
+        std::cerr << "Failed to open output file!" << std::endl;
+    }
+    m_outFile.write(reinterpret_cast<char*>(&coreCount), sizeof(uint32_t));
+    m_outFile.close();
+}
 
 void DatafileController::flushEntryBufferToFile()
 {
