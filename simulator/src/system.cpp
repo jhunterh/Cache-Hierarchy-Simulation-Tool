@@ -6,7 +6,8 @@ namespace CacheHierarchySimulator
 
 System::System(AddressSize addressSpace, CycleTime memoryLatency, CoreCount coreCount) : addressSpace(addressSpace), memoryLatency(memoryLatency), nextCoreId(0)
 {
-    coreList.resize(coreCount, Core(addressSpace));
+    //coreList.resize(coreCount, Core(addressSpace));
+    coreList = std::vector<Core>(coreCount, Core(addressSpace));
 }
 
 System::~System()

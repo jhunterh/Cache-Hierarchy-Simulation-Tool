@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "api.h"
 #include "basiccache.h"
@@ -18,8 +19,12 @@ int main(int argc, char** argv)
 
     // Add the system to the api
     std::cout << "Reading Configuration File..." << std::endl;
-    api.addSystem(CacheHierarchySimulator::parseConfigFile(argv[1]));
-    std::cout << "System Configured!" << std::endl;
+    std::vector<CacheHierarchySimulator::System> systemList = CacheHierarchySimulator::parseConfigFile(argv[1]);
+    for (auto& system : systemList)
+    {
+        api.addSystem(system);
+    }
+    std::cout << "Systems Configured!" << std::endl;
 
     // get instruction trace
     std::cout << "Loading Dataset..." << std::endl;

@@ -1,7 +1,7 @@
 .PHONY: clean all Simulator SimulatorExample BuildTests RunTests
 
 INCLUDES = -Isimulator/include -Isimulator/include/replacementpolicy
-LIBS = -Lsimulator/lib -lsimulator -lstdc++fs 
+LIBS = -Lsimulator/bin -lsimulator -lstdc++fs 
 
 DataGeneratorTool:
 	$(MAKE) -C DataGenerator obj-intel64/DataGenerator.so PIN_ROOT=$(PIN_HOME)
