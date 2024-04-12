@@ -4,9 +4,9 @@ namespace CacheHierarchySimulator
 {
 
 
-System::System(AddressSize addressSpace, CycleTime memoryLatency) : addressSpace(addressSpace), memoryLatency(memoryLatency), nextCoreId(0)
+System::System(AddressSize addressSpace, CycleTime memoryLatency, CoreCount coreCount) : addressSpace(addressSpace), memoryLatency(memoryLatency), nextCoreId(0)
 {
-    
+    coreList.resize(coreCount, Core(addressSpace));
 }
 
 System::~System()
@@ -16,9 +16,13 @@ System::~System()
     pidToCoreMap.clear();
 }
 
-void System::addCore(const Core& core)
+void System::addCoreCache(const CacheInterface& cache)
 {
-    coreList.push_back(core);
+    // Add cache to each core
+    for(Core& core : coreList)
+    {
+        core.addCache(cache);
+    }
 }
 
 void System::addSharedCache(const CacheInterface& cache)

@@ -24,10 +24,10 @@ class System
 {
 public:
 
-    System(AddressSize addressSpace, CycleTime memoryLatency);
+    System(AddressSize addressSpace, CycleTime memoryLatency, CoreCount coreCount);
     ~System();
 
-    void addCore(const Core& core);
+    void addCoreCache(const CacheInterface& cache);
     void addSharedCache(const CacheInterface& cache);
 
     void reset();
