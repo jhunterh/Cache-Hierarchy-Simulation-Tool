@@ -14,6 +14,8 @@ typedef uint32_t AssociativitySize;
 typedef AssociativitySize SetLineIdx;
 typedef uint16_t SetIndex;
 
+typedef uint8_t CoreCount;
+
 typedef uint64_t CycleTime;
 
 enum AccessState
