@@ -38,18 +38,18 @@ TEST_CASE("Add entries to the entry buffer")
         controller.flushEntryBufferToFile();
         CHECK(controller.getEntryIdx() == 0);
         CHECK(controller.getFileIdx() == 1);
-        std::string filename("data/data_");
-        filename.append(std::to_string(controller.getCurrentPid()));
-        filename.append("_");
-        filename.append(std::to_string(controller.getFileIdx()-1));
-        filename.append(".dat");
-        std::ifstream dataFile;
-        dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
-        CHECK(dataFile.is_open() == true);
+        std::string commandName("bzcat data/data_");
+        commandName.append(std::to_string(controller.getCurrentPid()));
+        commandName.append("_");
+        commandName.append(std::to_string(controller.getFileIdx()-1));
+        commandName.append(".dat");
+
+        FILE *dataFile = popen(commandName.c_str(), "r");
+        CHECK(dataFile != NULL);
         std::vector<CacheHierarchySimulator::Instruction> iList;
         iList.resize(2);
 
-        dataFile.read((char*)iList.data(), sizeof(CacheHierarchySimulator::Instruction)*2);
+        fread(iList.data(), 1, sizeof(CacheHierarchySimulator::Instruction)*2, dataFile);
         CHECK(iList[0].address == 1);
         CHECK(iList[0].info == 0x81); // write = true, threadid = 1
         CHECK(iList[0].cycleTime == 1);
@@ -57,5 +57,7 @@ TEST_CASE("Add entries to the entry buffer")
         CHECK(iList[1].address == 2);
         CHECK(iList[1].info == 0x02); // write = false, threadid = 2
         CHECK(iList[1].cycleTime == 2);
+
+        pclose(dataFile);
     }
 }

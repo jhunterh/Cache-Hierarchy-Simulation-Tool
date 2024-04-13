@@ -25,22 +25,21 @@ DatafileController::DatafileController()
 
 void DatafileController::flushEntryBufferToFile()
 {
-    std::string filename("data/");
-    filename.append(m_exeName);
-    filename.append("_");
-    filename.append(std::to_string(m_currentPid));
-    filename.append("_");
-    filename.append(std::to_string(m_fileIdx++));
-    filename.append(".dat");
-    std::ofstream outFile;
-    outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (!outFile.is_open())
+    std::string pipeCommand("bzip2 > data/");
+    pipeCommand.append(m_exeName);
+    pipeCommand.append("_");
+    pipeCommand.append(std::to_string(m_currentPid));
+    pipeCommand.append("_");
+    pipeCommand.append(std::to_string(m_fileIdx++));
+    pipeCommand.append(".dat");
+    FILE *outFile = popen(pipeCommand.c_str(), "w");
+    if (outFile == NULL)
     {
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(CacheHierarchySimulator::Instruction));
-    outFile.close();
+    fwrite(reinterpret_cast<char*>(m_entryBuffer.data()), 1, m_entryIdx*sizeof(CacheHierarchySimulator::Instruction), outFile);
+    pclose(outFile);
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0;
