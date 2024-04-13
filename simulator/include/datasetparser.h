@@ -8,7 +8,7 @@
 namespace CacheHierarchySimulator
 {
 
-std::vector<Instruction> parseInstructionList();
+std::vector<SimulatorInstruction> parseInstructionList();
 
 }
 

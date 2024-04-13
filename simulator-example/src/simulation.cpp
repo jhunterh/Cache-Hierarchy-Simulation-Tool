@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
     // get instruction trace
     std::cout << "Loading Dataset..." << std::endl;
-    std::vector<CacheHierarchySimulator::Instruction> instructionList = CacheHierarchySimulator::parseInstructionList();
+    std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList = CacheHierarchySimulator::parseInstructionList();
     std::cout << "Dataset Loaded!" << std::endl;
 
     // Run the simulation

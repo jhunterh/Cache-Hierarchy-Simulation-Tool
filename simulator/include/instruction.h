@@ -18,6 +18,12 @@ struct Instruction
     uint64_t cycleTime = 0;
 };
 
+struct SimulatorInstruction
+{
+    uint32_t pid = 0;
+    Instruction instruction;
+};
+
 }
 
 #endif // CHS_INSTRUCTION_H
