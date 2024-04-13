@@ -84,13 +84,14 @@ SANITY_SUBSET := $(TEST_TOOL_ROOTS) $(TEST_ROOTS)
 TOOL_CXXFLAGS += -Iinclude -I../simulator/include -I../simulator/include/replacementpolicy -I../third_party
 SRCS = $(wildcard src/*.cpp)
 OBJS = $(patsubst src/%.cpp, $(OBJDIR)%$(OBJ_SUFFIX), $(SRCS))
+OPTIMIZE = -O3
 
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 $(OBJDIR)%$(OBJ_SUFFIX): src/%.cpp
 	mkdir -p $(OBJDIR)
-	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $^
+	$(CXX) $(TOOL_CXXFLAGS) $(OPTIMIZE) $(COMP_OBJ)$@ $^
 
 # Build the tool as a shared object.
 $(OBJDIR)DataGenerator$(PINTOOL_SUFFIX): $(OBJS)
-	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(OPTIMIZE) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
