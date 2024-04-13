@@ -37,7 +37,6 @@ std::vector<SimulatorInstruction> parseInstructionList()
             continue;
         }
         pid_t pid = stoi(pidString);
-        std::cout << "PID: " << pid << std::endl;
 
         std::ifstream dataFile;
         dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
