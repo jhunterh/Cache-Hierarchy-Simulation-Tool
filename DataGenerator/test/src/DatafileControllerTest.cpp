@@ -11,18 +11,14 @@ TEST_CASE("Add entries to the entry buffer")
 
     CacheHierarchySimulator::Instruction entry1 = 
     {
-        .pid = 1,
-        .threadid = 1,
-        .isWrite = true,
+        .info = 0x81, // write = true, threadid = 1
         .address = 1,
         .cycleTime = 1
     };
 
     CacheHierarchySimulator::Instruction entry2 = 
     {
-        .pid = 2,
-        .threadid = 2,
-        .isWrite = false,
+        .info = 0x02, // write = false, threadid = 2
         .address = 2,
         .cycleTime = 2
     };
@@ -55,15 +51,11 @@ TEST_CASE("Add entries to the entry buffer")
 
         dataFile.read((char*)iList.data(), sizeof(CacheHierarchySimulator::Instruction)*2);
         CHECK(iList[0].address == 1);
-        CHECK(iList[0].threadid == 1);
-        CHECK(iList[0].isWrite == true);
-        CHECK(iList[0].pid == 1);
+        CHECK(iList[0].info == 0x81); // write = true, threadid = 1
         CHECK(iList[0].cycleTime == 1);
 
         CHECK(iList[1].address == 2);
-        CHECK(iList[1].threadid == 2);
-        CHECK(iList[1].isWrite == false);
-        CHECK(iList[1].pid == 2);
+        CHECK(iList[1].info == 0x02); // write = false, threadid = 2
         CHECK(iList[1].cycleTime == 2);
     }
 }

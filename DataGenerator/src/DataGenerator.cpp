@@ -26,11 +26,12 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeSta
         dataFile.setCurrentPid(pid);
     }
 
+    uint8_t info = tid;
+    info |= (0x80 & (((uint8_t) isWrite) << 7));
+    
     CacheHierarchySimulator::Instruction entry = 
     {
-        .pid = (unsigned int) pid,
-        .threadid = tid,
-        .isWrite = isWrite,
+        .info = info,
         .address = effectiveAddress,
         .cycleTime = timeStamp
     };

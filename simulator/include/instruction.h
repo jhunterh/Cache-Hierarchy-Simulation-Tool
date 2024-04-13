@@ -8,9 +8,12 @@ namespace CacheHierarchySimulator
 
 struct Instruction
 {
-    uint32_t pid = 0;
-    uint32_t threadid = 0;
-    bool isWrite = false;
+    /*  
+        info encoding (8 bits):
+        info[7] = load/store -> 0=load, 1=store
+        info[6..0] = thread id
+    */
+    uint8_t info = 0;
     uint64_t address = 0;
     uint64_t cycleTime = 0;
 };
