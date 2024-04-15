@@ -25,20 +25,38 @@ DatafileController::DatafileController()
 
 void DatafileController::flushEntryBufferToFile()
 {
-    std::string pipeCommand("bzip2 > data/");
-    pipeCommand.append(m_exeName);
-    pipeCommand.append("_");
-    pipeCommand.append(std::to_string(m_currentPid));
-    pipeCommand.append("_");
-    pipeCommand.append(std::to_string(m_fileIdx++));
-    pipeCommand.append(".dat");
+    std::string fileName("data/");
+    fileName.append(m_exeName);
+    fileName.append("_");
+    fileName.append(std::to_string(m_currentPid));
+    fileName.append("_");
+    fileName.append(std::to_string(m_fileIdx++));
+
+    size_t numBytes = m_entryIdx*sizeof(CacheHierarchySimulator::Instruction);
+    json fileData;
+    fileData["uncompressed_size"] = numBytes;
+    std::string fileNameJson(fileName);
+    fileNameJson.append(".json");
+    std::ofstream sizeFile(fileNameJson.c_str());
+    if (!sizeFile.is_open())
+    {
+        std::cerr << "Failed to open output file for uncompressed file size!" << std::endl;
+    }
+    sizeFile << std::setw(4) << fileData << std::endl;
+    sizeFile.close();
+
+    std::string fileNameDat(fileName);
+    fileNameDat.append(".dat");
+
+    std::string pipeCommand("bzip2 > ");
+    pipeCommand.append(fileNameDat);
     FILE *outFile = popen(pipeCommand.c_str(), "w");
     if (outFile == NULL)
     {
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    fwrite(reinterpret_cast<char*>(m_entryBuffer.data()), 1, m_entryIdx*sizeof(CacheHierarchySimulator::Instruction), outFile);
+    fwrite(reinterpret_cast<char*>(m_entryBuffer.data()), 1, numBytes, outFile);
     pclose(outFile);
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);

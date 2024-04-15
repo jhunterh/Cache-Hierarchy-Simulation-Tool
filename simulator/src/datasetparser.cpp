@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <string>
 #include <unistd.h>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #include "datasetparser.h"
 
@@ -26,6 +28,20 @@ std::vector<SimulatorInstruction> parseInstructionList()
     std::vector<SimulatorInstruction> sortedInstructionList;
     for (const std::string& filename : dataFiles)
     {
+        std::string sizeFileName = filename;
+        sizeFileName.erase(sizeFileName.length()-4); // remove .dat file suffix
+        sizeFileName.append(".json"); // add json suffix
+        std::cout << "Reading config at: " << sizeFileName << std::endl;
+        std::ifstream sizeFile(sizeFileName);
+        if (!sizeFile.is_open())
+        {
+            std::cout << "Issue opening config file! Skipping" << std::endl;
+            continue;
+        }
+        json sizeObj = json::parse(sizeFile);
+        sizeFile.close();
+        size_t uncompressedSize = sizeObj["uncompressed_size"];
+
         std::cout << "Reading data for " << filename << std::endl;
         std::string tokenString = filename.substr(filename.find_last_of('/')+1);
         std::string delimeter("_");
@@ -38,22 +54,15 @@ std::vector<SimulatorInstruction> parseInstructionList()
         }
         pid_t pid = stoi(pidString);
 
-        std::ifstream dataFile;
-        dataFile.open(filename.c_str(), std::ios::in | std::ios::binary);
-        if (!dataFile.is_open())
-        {
-            std::cout << "Issue opening datafile (skipping): " << filename << std::endl;
-            continue;
-        }
-        dataFile.unsetf(std::ios::skipws);
-        std::streampos fileSize;
-        dataFile.seekg(0, std::ios::end);
-        fileSize = dataFile.tellg();
-        dataFile.seekg(0, std::ios::beg);
+        std::string commandName("bzcat ");
+        commandName.append(filename);
+
+        FILE *dataFile = popen(commandName.c_str(), "r");
+
         std::vector<Instruction> iList;
-        iList.resize(fileSize/sizeof(Instruction));
-        dataFile.read((char*)iList.data(), fileSize);
-        dataFile.close();
+        iList.resize(uncompressedSize/sizeof(Instruction));
+        fread(iList.data(), 1, uncompressedSize, dataFile);
+        pclose(dataFile);
 
         std::vector<SimulatorInstruction> siList(iList.size());
         std::transform(iList.begin(), iList.end(), siList.begin(), 
