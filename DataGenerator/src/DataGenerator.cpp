@@ -12,6 +12,17 @@
 // Global Output Stream
 static PIN_MUTEX DatafileMutex;
 static DatafileController dataFile;
+static uint64_t initialAccessCount = 0; // used for fast forward calculation
+static bool canInstrument = false;
+
+KNOB<UINT64> SkipLength(KNOB_MODE_WRITEONCE,"pintool", 
+      "s", "0", "Skip specified number of memory accesses before beginning trace collection (default = 0)");
+
+KNOB<UINT64> MaxTraceLength(KNOB_MODE_WRITEONCE, "pintool", 
+      "l", "0", "Max number of memory accesses in trace (default is disabled)");
+
+KNOB<UINT64> TracePeriod(KNOB_MODE_WRITEONCE, "pintool",
+	  "n", "1000000", "Period for collecting trace information. ie. trace n memory accesses, then skip n memory accesses (default is 1000000)");
 
 // Called when load or store is encountered
 VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeStamp, THREADID tid) 
@@ -46,22 +57,38 @@ VOID Instruction(INS ins, VOID *v)
     // Instrument Memory Read
     if (INS_IsMemoryRead(ins)) 
     {
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
+        if (canInstrument)
+        {
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYREAD_EA,
                        IARG_BOOL, false,
                        IARG_TSC,
                        IARG_THREAD_ID,
                        IARG_END);
+        }
+        else
+        {
+            std::cout << "not yet..." << std::endl;
+            canInstrument = (++initialAccessCount >= SkipLength.Value());
+        }
     }
 
     // Instrument Memory Write
     if (INS_IsMemoryWrite(ins)) {
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
+        if (canInstrument)
+        {
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)MemoryAccessAnalysis,
                        IARG_MEMORYWRITE_EA,
                        IARG_BOOL, true,
                        IARG_TSC,
                        IARG_THREAD_ID,
                        IARG_END);
+        }
+        else
+        {
+            std::cout << "not yet..." << std::endl;
+            canInstrument = (++initialAccessCount >= SkipLength.Value());
+        }
     }
 }
 
@@ -113,6 +140,9 @@ int main(int argc, char *argv[])
 
     // Initialize DatafileController
     dataFile.setCurrentPid(PIN_GetPid());
+
+    // Set Flag
+    canInstrument = (SkipLength.Value() == 0);
 
     // Start the program
     PIN_StartProgram();
