@@ -49,7 +49,7 @@ void DatafileController::flushEntryBufferToFile()
     std::string fileNameDat(fileName);
     fileNameDat.append(".dat");
 
-    std::string pipeCommand("bzip2 > ");
+    std::string pipeCommand("pigz -c > ");
     pipeCommand.append(fileNameDat);
     FILE *outFile = popen(pipeCommand.c_str(), "w");
     if (outFile == NULL)

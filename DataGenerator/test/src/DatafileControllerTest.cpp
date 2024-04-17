@@ -59,7 +59,7 @@ TEST_CASE("Add entries to the entry buffer")
         std::string dataFileDat(dataFileName);
         dataFileDat.append(".dat");
 
-        std::string commandName("bzcat ");
+        std::string commandName("unpigz -c ");
         commandName.append(dataFileDat);
 
         FILE *dataFile = popen(commandName.c_str(), "r");

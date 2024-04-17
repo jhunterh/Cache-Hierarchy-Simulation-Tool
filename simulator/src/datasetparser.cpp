@@ -54,7 +54,7 @@ std::vector<SimulatorInstruction> parseInstructionList()
         }
         pid_t pid = stoi(pidString);
 
-        std::string commandName("bzcat ");
+        std::string commandName("unpigz -c ");
         commandName.append(filename);
 
         FILE *dataFile = popen(commandName.c_str(), "r");
