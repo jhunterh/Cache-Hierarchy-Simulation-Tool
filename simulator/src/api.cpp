@@ -18,6 +18,11 @@ void Api::addSystem(const System& system)
     systemList.push_back(system);
 }
 
+size_t Api::getSystemCount()
+{
+    return systemList.size();
+}
+
 void Api::clearSystems()
 {
     systemList.clear();

@@ -23,6 +23,7 @@ public:
     ~Api();
 
     void addSystem(const System& system);
+    size_t getSystemCount();
     void clearSystems();
 
     void resetSystemState();
