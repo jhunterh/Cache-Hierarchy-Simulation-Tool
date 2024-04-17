@@ -59,10 +59,11 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
     }
 
     uint64_t blockCount = cacheSize / blockSize;
+    uint64_t setCount = blockCount / associativity;
 
     // Calculate field sizes
     uint64_t offsetSize = fastLog2(blockSize);
-    uint64_t indexSize = fastLog2(blockCount / associativity);
+    uint64_t indexSize = fastLog2(setCount);
 
     if((indexSize + offsetSize) >= addressSize)
     {
@@ -84,7 +85,7 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
 
     // Create replacement policy instance
     this->replacementPolicy = replacementPolicy.createInstance();
-    this->replacementPolicy->initalize(indexSize, associativity);
+    this->replacementPolicy->initalize(setCount, associativity); // 2^indexSize
 }
 
 BasicCache::BasicCache(const BasicCache& rhs)

@@ -8,10 +8,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 # Build library
 set(LIB_FILES src/api.cpp src/basiccache.cpp src/configparser.cpp src/core.cpp src/datasetparser.cpp src/system.cpp src/replacementpolicy/firstinfirstout.cpp src/replacementpolicy/lastinfirstout.cpp)
 add_library(simulator STATIC ${LIB_FILES})
-target_include_directories(simulator PRIVATE include/ include/replacementpolicy/)
+target_include_directories(simulator PRIVATE include/ include/replacementpolicy/ ../third_party/)
 
 # Build unit tests
-set(TEST_FILES test/test.cpp test/test_basiccache.cpp)
+set(TEST_FILES test/test.cpp test/test_api.cpp test/test_basiccache.cpp test/test_core.cpp test/test_firstinfirstout.cpp test/test_lastinfirstout.cpp test/test_system.cpp)
 add_executable(test_simulator ${TEST_FILES})
 target_include_directories(test_simulator PRIVATE ../third_party/ include/ include/replacementpolicy/)
 target_link_libraries(test_simulator simulator)

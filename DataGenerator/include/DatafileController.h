@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fstream>
 #include <vector>
 #include <string>
 #include <unistd.h>
@@ -10,6 +9,8 @@
 
 class DatafileController {
 public:
+    DatafileController();
+
     void addEntry(CacheHierarchySimulator::Instruction entry);
 
     pid_t getCurrentPid();
@@ -26,7 +27,6 @@ public:
 
 private:
     std::vector<CacheHierarchySimulator::Instruction> m_entryBuffer;
-    std::ofstream m_outFile;
     uint64_t m_entryIdx = 0;
     pid_t m_currentPid = 0;
     unsigned int m_fileIdx = 0;
