@@ -12,7 +12,7 @@ using json = nlohmann::json;
 #include "types.h"
 #include "replacementpolicy/policylist.h"
 
-CacheHierarchySimulator::System CacheHierarchySimulator::parseConfigFile(std::string filename)
+std::vector<CacheHierarchySimulator::System> CacheHierarchySimulator::parseConfigFile(std::string filename)
 {
     std::ifstream configFile(filename.c_str());
     if (!configFile.is_open())
@@ -21,14 +21,28 @@ CacheHierarchySimulator::System CacheHierarchySimulator::parseConfigFile(std::st
         exit(1); // TODO: throw meaningful exception here
     }
 
-    json config = json::parse(configFile);
-    System system(64, config["system"]["latency"]);
-    // iterator through each core in the system
-    for (json::iterator core_it = config["system"]["cores"].begin(); core_it != config["system"]["cores"].end(); ++core_it) 
+    std::ifstream coresFile("data/cores.json");
+    if (!coresFile.is_open())
     {
-        Core core(64);
-        // for each core, iterate through all caches
-        for (json::iterator cache_it = core_it.value()["caches"].begin(); cache_it != core_it.value()["caches"].end(); ++cache_it) 
+        std::cout << "Issue opening cores config file!" << std::endl;
+        exit(1); // TODO: throw meaningful exception here
+    }
+
+    json config = json::parse(configFile);
+    json cores = json::parse(coresFile);
+    CoreCount coreCount = cores["core_count"];
+
+    std::vector<System> systemList;
+    json systemsList = config["systems"];
+    for (json::iterator system_it = systemsList.begin(); system_it != systemsList.end(); ++system_it)
+    {
+        json coreCachesList = system_it.value()["core_caches"];
+        json sharedCachesList = system_it.value()["shared_caches"];
+        CycleTime memLatency = system_it.value()["latency"];
+
+        System system(64, memLatency, coreCount);
+
+        for (json::iterator cache_it = coreCachesList.begin(); cache_it != coreCachesList.end(); ++cache_it)
         {
             json cache_obj = cache_it.value();
 
@@ -40,27 +54,28 @@ CacheHierarchySimulator::System CacheHierarchySimulator::parseConfigFile(std::st
             WritePolicy writePolicy = getWritePolicy(cache_obj["write_policy"]);
             const ReplacementPolicy::PolicyInterface& replacementPolicy = getReplacementPolicy(cache_obj["replacement_policy"]);
             BasicCache cache(addressSize, capacity, blockSize, associativity, latency, writePolicy, replacementPolicy);
-            core.addCache(cache);
+            system.addCoreCache(cache);
         }
-        system.addCore(core);
+
+        for (json::iterator cache_it = sharedCachesList.begin(); cache_it != sharedCachesList.end(); ++cache_it)
+        {
+            json cache_obj = cache_it.value();
+
+            AddressSize addressSize = 64;
+            CacheSize capacity = cache_obj["capacity"];
+            BlockSize blockSize = cache_obj["block_size"];
+            AssociativitySize associativity = cache_obj["associativity"];
+            CycleTime latency = cache_obj["latency"];
+            WritePolicy writePolicy = getWritePolicy(cache_obj["write_policy"]);
+            const ReplacementPolicy::PolicyInterface& replacementPolicy = getReplacementPolicy(cache_obj["replacement_policy"]);
+            BasicCache cache(addressSize, capacity, blockSize, associativity, latency, writePolicy, replacementPolicy);
+            system.addSharedCache(cache);
+        }
+
+        systemList.push_back(system);
     }
 
-    for (json::iterator cache_it = config["system"]["shared_caches"].begin(); cache_it != config["system"]["shared_caches"].end(); ++cache_it) 
-    {
-        json cache_obj = cache_it.value();
-        
-        AddressSize addressSize = 64;
-        CacheSize capacity = cache_obj["capacity"];
-        BlockSize blockSize = cache_obj["block_size"];
-        AssociativitySize associativity = cache_obj["associativity"];
-        CycleTime latency = cache_obj["latency"];
-        WritePolicy writePolicy = getWritePolicy(cache_obj["write_policy"]);
-        const ReplacementPolicy::PolicyInterface& replacementPolicy = getReplacementPolicy(cache_obj["replacement_policy"]);
-        BasicCache cache(addressSize, capacity, blockSize, associativity, latency, writePolicy, replacementPolicy);
-        system.addSharedCache(cache);
-    }
-
-    return system;
+    return systemList;
 }
 
 const CacheHierarchySimulator::ReplacementPolicy::PolicyInterface& CacheHierarchySimulator::getReplacementPolicy(std::string policyString)

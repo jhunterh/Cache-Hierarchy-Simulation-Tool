@@ -1,35 +1,32 @@
 {
-    "system" :
-    {
-        "cores" :
-        [
-            {
-                "caches" :
-                [
-                    {
-                        "latency" : 2,
-                        "write_policy" : "WRITE_ALLOCATE",
-                        "capacity" : 2048,
-                        "block_size" : 64,
-                        "replacement_policy" : "FIFO",
-                        "associativity" : 4
-                    }
-                ]
-            }
-        ],
+    "systems" :
+    [
+        {
+            "core_caches" :
+            [
+                {
+                    "latency" : 2,
+                    "write_policy" : "WRITE_ALLOCATE",
+                    "capacity" : 2048,
+                    "block_size" : 64,
+                    "replacement_policy" : "FIFO",
+                    "associativity" : 4
+                }
+            ],
 
-        "shared_caches" :
-        [
-            {
-                "latency" : 2,
-                "write_policy" : "WRITE_ALLOCATE",
-                "capacity" : 2048,
-                "block_size" : 64,
-                "replacement_policy" : "FIFO",
-                "associativity" : 4
-            }
-        ],
+            "shared_caches" :
+            [
+                {
+                    "latency" : 2,
+                    "write_policy" : "WRITE_ALLOCATE",
+                    "capacity" : 2048,
+                    "block_size" : 64,
+                    "replacement_policy" : "FIFO",
+                    "associativity" : 4
+                }
+            ],
 
-        "latency" : 2
-    }
+            "latency" : 2
+        }
+    ]
 }

@@ -18,7 +18,7 @@ System::System(AddressSize addressSpace, CycleTime memoryLatency, CoreCount core
         throw InvalidCoreCountException();
     }
 
-    coreList.resize(coreCount, Core(addressSpace));
+    coreList = std::vector<Core>(coreCount, Core(addressSpace));
 }
 
 System::~System()
