@@ -6,6 +6,18 @@ namespace CacheHierarchySimulator
 
 System::System(AddressSize addressSpace, CycleTime memoryLatency, CoreCount coreCount) : addressSpace(addressSpace), memoryLatency(memoryLatency), nextCoreId(0)
 {
+    // Make sure address space is valid
+    if((sizeof(size_t)*8) < addressSpace || addressSpace == 0)
+    {
+        throw InvalidAddressSizeException();
+    }
+
+    // Make sure core count is valid
+    if(coreCount > 128 || coreCount < 1)
+    {
+        throw InvalidCoreCountException();
+    }
+
     coreList.resize(coreCount, Core(addressSpace));
 }
 

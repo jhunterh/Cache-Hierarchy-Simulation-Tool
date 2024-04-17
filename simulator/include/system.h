@@ -11,6 +11,7 @@
 #include "types.h"
 #include "core.h"
 #include "cacheinterface.h"
+#include "exception.h"
 
 namespace CacheHierarchySimulator
 {
@@ -32,14 +33,14 @@ public:
 
     void reset();
 
-    void simulate(const std::vector<Instruction>& instructionList);
+    AccessResult read(Core& core, Address address);
+    AccessResult write(Core& core, Address address);
 
     SystemStats getStats() const;
 
 private:
 
-    AccessResult read(Core& core, Address address);
-    AccessResult write(Core& core, Address address);
+
     
     AddressSize addressSpace;
     CycleTime memoryLatency;

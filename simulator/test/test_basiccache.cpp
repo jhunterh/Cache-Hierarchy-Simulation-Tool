@@ -1,6 +1,7 @@
 #include "doctest.h"
 #include "basiccache.h"
 #include "policylist.h"
+#include "exception.h"
 
 TEST_CASE("Test BasicCache constructor")
 {

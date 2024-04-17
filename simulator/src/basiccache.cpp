@@ -1,5 +1,7 @@
 #include <basiccache.h>
 
+#include "exception.h"
+
 namespace CacheHierarchySimulator
 {
 

@@ -1,11 +1,16 @@
 #include "core.h"
+#include "exception.h"
 
 namespace CacheHierarchySimulator
 {
 
 Core::Core(AddressSize addressSpace) : addressSpace(addressSpace)
 {
-
+    // Make sure address space is valid
+    if((sizeof(size_t)*8) < addressSpace || addressSpace == 0)
+    {
+        throw InvalidAddressSizeException();
+    }
 }
 
 Core::Core(const Core& rhs) : Core(rhs.addressSpace)

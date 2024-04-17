@@ -3,12 +3,20 @@
 
 TEST_CASE("Test Api constructor")
 {
-
+    // Test that constructor does not throw an error
+    REQUIRE_NOTHROW(
+        CacheHierarchySimulator::Api();
+    );
 }
 
 TEST_CASE("Test Api deconstructor")
 {
-    
+    CacheHierarchySimulator::Api* api = new CacheHierarchySimulator::Api();
+
+    // Test that deconstructor does not throw
+    REQUIRE_NOTHROW(
+        delete api;
+    ); 
 }
 
 class TestApiFixture {
