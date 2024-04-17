@@ -45,8 +45,8 @@ std::vector<SimulatorInstruction> parseInstructionList()
         std::cout << "Reading data for " << filename << std::endl;
         std::string tokenString = filename.substr(filename.find_last_of('/')+1);
         std::string delimeter("_");
-        tokenString.erase(0, tokenString.find(delimeter)+delimeter.length());
-        std::string pidString = tokenString.substr(0, tokenString.find(delimeter));
+        tokenString.erase(tokenString.find_last_of(delimeter), tokenString.length());
+        std::string pidString = tokenString.substr(tokenString.find_last_of(delimeter)+1, tokenString.length());
         if (pidString == tokenString)
         {
             std::cout << "Datafile: " << filename << " is in wrong naming format! Skipping." << std::endl;
