@@ -35,6 +35,7 @@ void DatafileController::flushEntryBufferToFile()
     size_t numBytes = m_entryIdx*sizeof(CacheHierarchySimulator::Instruction);
     json fileData;
     fileData["uncompressed_size"] = numBytes;
+    fileData["num_entries"] = m_entryIdx;
     std::string fileNameJson(fileName);
     fileNameJson.append(".json");
     std::ofstream sizeFile(fileNameJson.c_str());
