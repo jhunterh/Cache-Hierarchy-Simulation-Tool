@@ -33,14 +33,14 @@ public:
 
     void reset();
 
-    AccessResult read(Core& core, Address address);
-    AccessResult write(Core& core, Address address);
+    void simulate(const std::vector<Instruction>& instructionList);
 
     SystemStats getStats() const;
 
 private:
 
-
+    AccessResult read(Core& core, Address address);
+    AccessResult write(Core& core, Address address);
     
     AddressSize addressSpace;
     CycleTime memoryLatency;
