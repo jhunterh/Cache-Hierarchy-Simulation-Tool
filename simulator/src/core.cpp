@@ -38,6 +38,8 @@ void Core::reset()
     {
         cache->reset();
     }
+
+    stats = ModuleStats{0};
 }
 
 AccessResult Core::read(Address address)

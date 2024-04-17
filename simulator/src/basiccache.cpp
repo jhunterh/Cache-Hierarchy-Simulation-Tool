@@ -124,6 +124,9 @@ void BasicCache::reset()
     entryTable.resize(entryTableSize);
 
     replacementPolicy->reset();
+
+    stats = ModuleStats{0};
+    stats.averageMemoryAccessTime = latency;
 }
 
 AccessResult BasicCache::read(Address address)
