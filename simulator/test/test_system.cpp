@@ -81,7 +81,7 @@ class TestSystemFixture {
 public:
     TestSystemFixture()
     {
-        system = new CacheHierarchySimulator::System(64, 1, 2);
+        system = new CacheHierarchySimulator::System(64, 10, 2);
     };
 
     ~TestSystemFixture()
@@ -145,15 +145,15 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test reset method")
 
     // Check stats at zero
     auto systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 0);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 0);
+    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
+    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
     
     auto stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 12);
 
     // Do cache read
     CacheHierarchySimulator::Instruction instRead;
@@ -166,16 +166,16 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test reset method")
     system->reset();
 
     // Check still at 0
-    auto systemStats = system->getStats();
+    systemStats = system->getStats();
     CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
     CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
     
-    auto stats = systemStats.totalSystemStats;
+    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 12);
 }
 
 TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
@@ -188,36 +188,58 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
     system->addCoreCache(cache);
     system->addSharedCache(cache);
 
-    // Check stats at zero
-    auto systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 0);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 0);
-    
-    auto stats = systemStats.totalSystemStats;
-    CHECK_EQ(stats.readHits, 0);
-    CHECK_EQ(stats.readMisses, 0);
-    CHECK_EQ(stats.writeHits, 0);
-    CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    SUBCASE("Test stats start at zero")
+    {
+        // Check stats at zero
+        auto systemStats = system->getStats();
+        CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
+        CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+        
+        auto stats = systemStats.totalSystemStats;
+        CHECK_EQ(stats.readHits, 0);
+        CHECK_EQ(stats.readMisses, 0);
+        CHECK_EQ(stats.writeHits, 0);
+        CHECK_EQ(stats.writeMisses, 0);
+        CHECK_EQ(stats.averageMemoryAccessTime, 12);
+    }
 
-    // Do cache read
-    CacheHierarchySimulator::Instruction instRead;
-    instRead.address = 0x1234;
-    instRead.isWrite = false;
-    std::vector<CacheHierarchySimulator::Instruction> instructionList { instRead, instRead };
-    system->simulate(instructionList);
+    SUBCASE("Test simulate read")
+    {
+        // Test read
+        CacheHierarchySimulator::Instruction instruction;
+        instruction.address = 0x1234;
+        instruction.isWrite = false;
+        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        system->simulate(instructionList);
 
-    // Check correct values
-    auto systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
-    
-    auto stats = systemStats.totalSystemStats;
-    CHECK_EQ(stats.readHits, 1);
-    CHECK_EQ(stats.readMisses, 1);
-    CHECK_EQ(stats.writeHits, 0);
-    CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 2); // AMAT should be 2
+        // Check correct values
+        auto systemStats = system->getStats();
+        auto stats = systemStats.totalSystemStats;
+        CHECK_EQ(stats.readHits, 1);
+        CHECK_EQ(stats.readMisses, 1);
+        CHECK_EQ(stats.writeHits, 0);
+        CHECK_EQ(stats.writeMisses, 0);
+        CHECK_EQ(stats.averageMemoryAccessTime, 9.25); // AMAT should be 9.25
+    }
+
+    SUBCASE("Test simulate write")
+    {
+        // Test write
+        CacheHierarchySimulator::Instruction instruction;
+        instruction.address = 0x5678;
+        instruction.isWrite = true;
+        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        system->simulate(instructionList);
+
+        // Check correct values
+        auto systemStats = system->getStats();
+        auto stats = systemStats.totalSystemStats;
+        CHECK_EQ(stats.readHits, 0);
+        CHECK_EQ(stats.readMisses, 0);
+        CHECK_EQ(stats.writeHits, 1);
+        CHECK_EQ(stats.writeMisses, 1);
+        CHECK_EQ(stats.averageMemoryAccessTime, 9.25); // AMAT should be 9.25
+    }
 }
 
 TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
@@ -232,7 +254,7 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 10);
 
     // Add core and system cache
     CacheHierarchySimulator::BasicCache cache(
@@ -243,16 +265,16 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     system->addSharedCache(cache);
 
     // Check still at 0, but vectors have elements
-    auto systemStats = system->getStats();
+    systemStats = system->getStats();
     CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
     CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
     
-    auto stats = systemStats.totalSystemStats;
+    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 12);
 
     // Do cache read
     CacheHierarchySimulator::Instruction instRead;
@@ -262,14 +284,14 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     system->simulate(instructionList);
 
     // Test return values
-    auto systemStats = system->getStats();
+    systemStats = system->getStats();
     CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
     CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
     
-    auto stats = systemStats.totalSystemStats;
+    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 1);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 3); // AMAT should be 3
+    CHECK_EQ(stats.averageMemoryAccessTime, 12); // AMAT should be 12
 }
