@@ -28,6 +28,7 @@ static bool doingGaps = false;
 static uint64_t gapSize = 0;
 static uint64_t skipSize = 0;
 static uint64_t collectionSize = 0;
+static uint64_t maxTraceValue = 0;
 
 KNOB<UINT64> SkipLength(KNOB_MODE_WRITEONCE,"pintool", 
       "s", "0", "Skip specified number of memory accesses before beginning trace collection (default = 0)");
@@ -92,7 +93,7 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeSta
             PIN_MutexUnlock(&DatafileMutex);
 
             // Detect Max Trace Count
-            if ((MaxTraceLength.Value() > 0) && (traceCount >= MaxTraceLength.Value()))
+            if ((maxTraceValue > 0) && (traceCount >= maxTraceValue))
             {
                 std::cout << "Process " << dataFile.getCurrentPid() << " exiting at max trace count of " << traceCount << std::endl;
                 PIN_ExitApplication(0);
@@ -220,6 +221,12 @@ int main(int argc, char *argv[])
         gapSize = GapSize.Value();
         collectionSize = CollectionSize.Value();
         std::cout << "Doing gaps of " << GapSize.Value() << " for every " << CollectionSize.Value() << " accesses traced." << std::endl;
+    }
+
+    if (MaxTraceLength.Value() > 0)
+    {
+        maxTraceValue = MaxTraceLength.Value();
+        std::cout << "Max trace length is: " << MaxTraceLength.Value() << std::endl;
     }
 
     // Start the program
