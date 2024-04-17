@@ -26,14 +26,9 @@ int main(int argc, char** argv)
     }
     std::cout << "Systems Configured!" << std::endl;
 
-    // get instruction trace
-    std::cout << "Loading Dataset..." << std::endl;
-    std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList = CacheHierarchySimulator::parseInstructionList();
-    std::cout << "Dataset Loaded!" << std::endl;
-
     // Run the simulation
     std::cout << "Starting Simulation." << std::endl;
-    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation(instructionList);
+    std::vector<CacheHierarchySimulator::SystemStats> stats = api.runSimulation();
 
     for (auto& stat : stats)
     {

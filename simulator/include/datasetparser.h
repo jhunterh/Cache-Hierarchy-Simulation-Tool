@@ -8,7 +8,15 @@
 namespace CacheHierarchySimulator
 {
 
-std::vector<SimulatorInstruction> parseInstructionList();
+class DatasetParser
+{
+public:
+    DatasetParser() {}
+    bool getNextInstructionWave(std::vector<SimulatorInstruction>& instructionList);
+
+private:
+    std::vector<SimulatorInstruction> parseInstructionList();
+};
 
 }
 

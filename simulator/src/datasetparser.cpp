@@ -12,7 +12,13 @@ using json = nlohmann::json;
 namespace CacheHierarchySimulator
 {
 
-std::vector<SimulatorInstruction> parseInstructionList()
+bool DatasetParser::getNextInstructionWave(std::vector<SimulatorInstruction>& instructionList)
+{
+    instructionList = parseInstructionList();
+    return instructionList.size() > 0;
+}
+
+std::vector<SimulatorInstruction> DatasetParser::parseInstructionList()
 {
     // get datafile names from data folder
     std::vector<std::string> dataFiles;

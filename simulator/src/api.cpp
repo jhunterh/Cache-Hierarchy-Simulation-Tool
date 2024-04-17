@@ -1,5 +1,7 @@
 #include "api.h"
 
+#include "datasetparser.h"
+
 namespace CacheHierarchySimulator
 {
 
@@ -31,15 +33,20 @@ void Api::resetSystemState()
     }
 }
 
-std::vector<SystemStats> Api::runSimulation(std::vector<SimulatorInstruction> instructionList)
+std::vector<SystemStats> Api::runSimulation()
 {
-    // Simulate system by system
-    for(System& system : systemList)
+    DatasetParser parser;
+    std::vector<SimulatorInstruction> instructionList;
+    while (parser.getNextInstructionWave(instructionList))
     {
-        // Simulate per system
-        system.simulate(instructionList);
+        // Simulate system by system
+        for (System& system : systemList)
+        {
+            // Simulate per system
+            system.simulate(instructionList);
+        }
     }
-
+    
     // Get stats
     std::vector<SystemStats> statList;
     statList.reserve(systemList.size());
