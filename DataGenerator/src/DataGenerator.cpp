@@ -53,7 +53,6 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeSta
             {
                 traceCountPeriod = 0;
                 state = COLLECTING;
-                std::cout << "Entering Collection Section..." << std::endl;
             }
             PIN_MutexUnlock(&GapMutex);
             break;
@@ -89,7 +88,6 @@ VOID MemoryAccessAnalysis(ADDRINT effectiveAddress, BOOL isWrite, UINT64 timeSta
             {
                 traceCountPeriod = 0;
                 state = GAP;
-                std::cout << "Entering Gap Section..." << std::endl;
             }
             PIN_MutexUnlock(&DatafileMutex);
 
