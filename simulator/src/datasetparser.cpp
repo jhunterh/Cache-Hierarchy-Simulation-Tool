@@ -48,6 +48,7 @@ std::vector<SimulatorInstruction> DatasetParser::parseInstructionList()
         sizeFile.close();
         size_t uncompressedSize = configObj["uncompressed_size"];
         pid_t pid = configObj["pid"];
+        unsigned int fileIdx = configObj["index"];
 
         std::cout << "Reading data for " << filename << std::endl;
 

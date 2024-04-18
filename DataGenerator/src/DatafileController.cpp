@@ -37,6 +37,7 @@ void DatafileController::flushEntryBufferToFile()
     fileData["uncompressed_size"] = numBytes;
     fileData["num_entries"] = m_entryIdx;
     fileData["pid"] = m_currentPid;
+    fileData["index"] = m_fileIdx;
     std::string fileNameJson(fileName);
     fileNameJson.append(".json");
     std::ofstream sizeFile(fileNameJson.c_str());
