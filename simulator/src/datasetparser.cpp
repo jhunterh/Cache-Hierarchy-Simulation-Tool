@@ -34,31 +34,22 @@ std::vector<SimulatorInstruction> DatasetParser::parseInstructionList()
     std::vector<SimulatorInstruction> sortedInstructionList;
     for (const std::string& filename : dataFiles)
     {
-        std::string sizeFileName = filename;
-        sizeFileName.erase(sizeFileName.length()-4); // remove .dat file suffix
-        sizeFileName.append(".json"); // add json suffix
-        std::cout << "Reading config at: " << sizeFileName << std::endl;
-        std::ifstream sizeFile(sizeFileName);
+        std::string configFileName = filename;
+        configFileName.erase(configFileName.length()-4); // remove .dat file suffix
+        configFileName.append(".json"); // add json suffix
+        std::cout << "Reading config at: " << configFileName << std::endl;
+        std::ifstream sizeFile(configFileName);
         if (!sizeFile.is_open())
         {
             std::cout << "Issue opening config file! Skipping" << std::endl;
             continue;
         }
-        json sizeObj = json::parse(sizeFile);
+        json configObj = json::parse(sizeFile);
         sizeFile.close();
-        size_t uncompressedSize = sizeObj["uncompressed_size"];
+        size_t uncompressedSize = configObj["uncompressed_size"];
+        pid_t pid = configObj["pid"];
 
         std::cout << "Reading data for " << filename << std::endl;
-        std::string tokenString = filename.substr(filename.find_last_of('/')+1);
-        std::string delimeter("_");
-        tokenString.erase(tokenString.find_last_of(delimeter), tokenString.length());
-        std::string pidString = tokenString.substr(tokenString.find_last_of(delimeter)+1, tokenString.length());
-        if (pidString == tokenString)
-        {
-            std::cout << "Datafile: " << filename << " is in wrong naming format! Skipping." << std::endl;
-            continue;
-        }
-        pid_t pid = stoi(pidString);
 
         std::string commandName("unpigz -c ");
         commandName.append(filename);
