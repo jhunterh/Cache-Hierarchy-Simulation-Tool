@@ -2,6 +2,8 @@
 #define CHS_DATASETPARSER_H
 
 #include <vector>
+#include <map>
+#include <unistd.h>
 
 #include "instruction.h"
 
@@ -16,6 +18,7 @@ public:
 
 private:
     std::vector<SimulatorInstruction> parseInstructionList();
+    std::map<pid_t, std::vector<SimulatorInstruction>> m_dataMap;
 };
 
 }
