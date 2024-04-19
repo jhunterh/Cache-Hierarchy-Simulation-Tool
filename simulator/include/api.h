@@ -28,7 +28,7 @@ public:
 
     void resetSystemState();
 
-    std::vector<SystemStats> runSimulation(std::vector<Instruction> instructionList);
+    std::vector<SystemStats> runSimulation(std::vector<SimulatorInstruction> instructionList);
 
 private:
 

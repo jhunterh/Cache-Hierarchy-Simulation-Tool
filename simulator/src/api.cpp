@@ -36,7 +36,7 @@ void Api::resetSystemState()
     }
 }
 
-std::vector<SystemStats> Api::runSimulation(std::vector<Instruction> instructionList)
+std::vector<SystemStats> Api::runSimulation(std::vector<SimulatorInstruction> instructionList)
 {
     // Simulate system by system
     for(System& system : systemList)

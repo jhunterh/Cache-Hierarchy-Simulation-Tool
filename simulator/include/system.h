@@ -33,7 +33,7 @@ public:
 
     void reset();
 
-    void simulate(const std::vector<Instruction>& instructionList);
+    void simulate(const std::vector<SimulatorInstruction>& instructionList);
 
     SystemStats getStats() const;
 

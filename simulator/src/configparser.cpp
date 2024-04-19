@@ -14,7 +14,7 @@ using json = nlohmann::json;
 
 std::vector<CacheHierarchySimulator::System> CacheHierarchySimulator::parseConfigFile(std::string filename)
 {
-    std::ifstream configFile(filename.c_str());
+    std::ifstream configFile(filename);
     if (!configFile.is_open())
     {
         std::cout << "Issue opening config file!" << std::endl;

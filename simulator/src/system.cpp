@@ -85,25 +85,26 @@ void System::reset()
 }
 
 
-void System::simulate(const std::vector<Instruction>& instructionList)
+void System::simulate(const std::vector<SimulatorInstruction>& instructionList)
 {
     // All instructions are already sorted by cycle time
-    for(const Instruction& instruction : instructionList)
+    for(const SimulatorInstruction& simInstruction : instructionList)
     {   
         // Use pid to get core
         // TODO: Add scheduler
-        size_t coreId = getCoreIdFromPid(instruction.pid);
+        size_t coreId = getCoreIdFromPid(simInstruction.pid);
         Core& core = coreList.at(coreId);
 
         // Execute read or write
         // TODO: Possibly do something with read & write function outputs
-        if(instruction.isWrite)
+        bool isWrite = ((simInstruction.instruction.info & 0x80) >> 7);
+        if(isWrite)
         {
-            write(core, instruction.address);
+            write(core, simInstruction.instruction.address);
         }
         else
         {
-            read(core, instruction.address);
+            read(core, simInstruction.instruction.address);
         }
     }
 }

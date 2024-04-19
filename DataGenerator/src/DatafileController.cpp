@@ -25,22 +25,40 @@ DatafileController::DatafileController()
 
 void DatafileController::flushEntryBufferToFile()
 {
-    std::string filename("data/");
-    filename.append(m_exeName);
-    filename.append("_");
-    filename.append(std::to_string(m_currentPid));
-    filename.append("_");
-    filename.append(std::to_string(m_fileIdx++));
-    filename.append(".dat");
-    std::ofstream outFile;
-    outFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-    if (!outFile.is_open())
+    std::string fileName("data/");
+    fileName.append(m_exeName);
+    fileName.append("_");
+    fileName.append(std::to_string(m_currentPid));
+    fileName.append("_");
+    fileName.append(std::to_string(m_fileIdx++));
+
+    size_t numBytes = m_entryIdx*sizeof(CacheHierarchySimulator::Instruction);
+    json fileData;
+    fileData["uncompressed_size"] = numBytes;
+    fileData["num_entries"] = m_entryIdx;
+    std::string fileNameJson(fileName);
+    fileNameJson.append(".json");
+    std::ofstream sizeFile(fileNameJson.c_str());
+    if (!sizeFile.is_open())
+    {
+        std::cerr << "Failed to open output file for uncompressed file size!" << std::endl;
+    }
+    sizeFile << std::setw(4) << fileData << std::endl;
+    sizeFile.close();
+
+    std::string fileNameDat(fileName);
+    fileNameDat.append(".dat");
+
+    std::string pipeCommand("pigz -c > ");
+    pipeCommand.append(fileNameDat);
+    FILE *outFile = popen(pipeCommand.c_str(), "w");
+    if (outFile == NULL)
     {
         std::cerr << "Failed to open output file!" << std::endl;
     }
 
-    outFile.write(reinterpret_cast<char*>(m_entryBuffer.data()), m_entryIdx*sizeof(CacheHierarchySimulator::Instruction));
-    outFile.close();
+    fwrite(reinterpret_cast<char*>(m_entryBuffer.data()), 1, numBytes, outFile);
+    pclose(outFile);
     m_entryBuffer.clear();
     m_entryBuffer.resize(MAX_ENTRY_COUNT);
     m_entryIdx = 0;
