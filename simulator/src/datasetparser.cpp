@@ -8,17 +8,43 @@ using json = nlohmann::json;
 
 #include "datasetparser.h"
 
+#define INSTRUCTION_WAVE_SIZE 100000
+
 namespace CacheHierarchySimulator
 {
 
 bool DatasetParser::getNextInstructionWave(std::vector<SimulatorInstruction>& instructionList)
 {
-    instructionList = parseInstructionList();
-    return instructionList.size() > 0;
+    bool simulating = true;
+    instructionList.clear();
+    for (int i = 0; i < INSTRUCTION_WAVE_SIZE; ++i)
+    {
+        if (m_instructionHeap.empty())
+        {   
+            simulating =  instructionList.size() > 0;
+            break;
+        }
+        else
+        {
+            HeapEntry item = m_instructionHeap.front();
+            std::pop_heap(m_instructionHeap.begin(), m_instructionHeap.end(), HeapEntryComparator());
+            instructionList.push_back(item.instruction);
+            item.instruction = item.parser->getNextInstruction();
+            if (!item.parser->hasFinished())
+            {
+                m_instructionHeap.push_back(item);
+                std::push_heap(m_instructionHeap.begin(), m_instructionHeap.end(), HeapEntryComparator());
+            }
+        }
+    }
+    
+    return simulating;
 }
 
-std::vector<SimulatorInstruction> DatasetParser::parseInstructionList()
+bool DatasetParser::initialize()
 {
+    bool success = true;
+    // start reading files
     // get datafile names from data folder
     std::vector<std::string> dataFiles;
     for (const auto& file : std::filesystem::directory_iterator("data")) 
@@ -29,59 +55,57 @@ std::vector<SimulatorInstruction> DatasetParser::parseInstructionList()
         }
     }
 
-    // read entries from each datafile and add them to main vector
-    std::vector<SimulatorInstruction> sortedInstructionList;
+    // read each datafile config and create parsers
+    unsigned int numKeys = 0;
     for (const std::string& filename : dataFiles)
     {
         std::string configFileName = filename;
         configFileName.erase(configFileName.length()-4); // remove .dat file suffix
         configFileName.append(".json"); // add json suffix
+
         std::cout << "Reading config at: " << configFileName << std::endl;
-        std::ifstream sizeFile(configFileName);
-        if (!sizeFile.is_open())
+        std::ifstream configFile(configFileName);
+        if (!configFile.is_open())
         {
             std::cout << "Issue opening config file! Skipping" << std::endl;
             continue;
         }
-        json configObj = json::parse(sizeFile);
-        sizeFile.close();
-        size_t uncompressedSize = configObj["uncompressed_size"];
+        json configObj = json::parse(configFile);
+        configFile.close();
         pid_t pid = configObj["pid"];
-        unsigned int fileIdx = configObj["index"];
 
-        std::cout << "Reading data for " << filename << std::endl;
+        std::string fileHeader = filename;
+        fileHeader.erase(fileHeader.length()-4); // remove .dat file suffix
+        fileHeader.erase(fileHeader.find_last_of("_"));
 
-        std::string commandName("unpigz -c ");
-        commandName.append(filename);
-
-        FILE *dataFile = popen(commandName.c_str(), "r");
-
-        std::vector<Instruction> iList;
-        iList.resize(uncompressedSize/sizeof(Instruction));
-        fread(iList.data(), 1, uncompressedSize, dataFile);
-        pclose(dataFile);
-
-        std::vector<SimulatorInstruction> siList(iList.size());
-        std::transform(iList.begin(), iList.end(), siList.begin(), 
-        [&pid](Instruction i)
+        // check if pid exists already
+        if (m_dataMap.find(pid) == m_dataMap.end())
         {
-            SimulatorInstruction si;
-            si.instruction = i;
-            si.pid = pid;
-            return si;
-        });
+            // need to create new parser and initialize
+            DatafileParser parser(fileHeader, pid);
+            m_dataMap.insert(std::make_pair(pid, parser));
+            ++numKeys;
 
-        sortedInstructionList.insert(sortedInstructionList.end(), siList.begin(), siList.end());
+            if (!parser.initialize())
+            {
+                std::cout << "Issue initializing data file parser: " << filename << std::endl;
+                success = false;
+                break;
+            }
+        }
     }
 
-    // sort the final instruction list by timestamp
-    std::sort(sortedInstructionList.begin(), sortedInstructionList.end(), 
-    [](const SimulatorInstruction& a, const SimulatorInstruction& b) 
+    m_instructionHeap.clear();
+    for (auto& pair : m_dataMap)
     {
-        return a.instruction.cycleTime < b.instruction.cycleTime;
-    });
+        HeapEntry item;
+        item.instruction = pair.second.getNextInstruction();
+        item.parser = &pair.second;
+        m_instructionHeap.push_back(item);
+        std::push_heap(m_instructionHeap.begin(), m_instructionHeap.end(), HeapEntryComparator());
+    }
 
-    return sortedInstructionList;
+    return success;
 }
 
-};
+}

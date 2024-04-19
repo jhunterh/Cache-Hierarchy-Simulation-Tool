@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Build library
-set(LIB_FILES src/api.cpp src/basiccache.cpp src/configparser.cpp src/core.cpp src/datasetparser.cpp src/system.cpp src/replacementpolicy/firstinfirstout.cpp src/replacementpolicy/lastinfirstout.cpp)
+set(LIB_FILES src/api.cpp src/basiccache.cpp src/configparser.cpp src/core.cpp src/datafileparser.cpp src/datasetparser.cpp src/system.cpp src/replacementpolicy/firstinfirstout.cpp src/replacementpolicy/lastinfirstout.cpp)
 add_library(simulator STATIC ${LIB_FILES})
 target_include_directories(simulator PRIVATE include/ include/replacementpolicy/ ../third_party/)
 target_link_libraries(simulator stdc++fs)

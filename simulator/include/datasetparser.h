@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "instruction.h"
+#include "datafileparser.h"
 
 namespace CacheHierarchySimulator
 {
@@ -14,11 +15,27 @@ class DatasetParser
 {
 public:
     DatasetParser() {}
+    bool initialize();
     bool getNextInstructionWave(std::vector<SimulatorInstruction>& instructionList);
 
 private:
-    std::vector<SimulatorInstruction> parseInstructionList();
-    std::map<pid_t, std::vector<SimulatorInstruction>> m_dataMap;
+    struct HeapEntry
+    {
+        SimulatorInstruction instruction;
+        DatafileParser *parser;
+    };
+
+    struct HeapEntryComparator
+    {
+        // custom comparator
+        bool operator()(const HeapEntry& a, const HeapEntry& b) const
+        {
+            return a.instruction.instruction.cycleTime > b.instruction.instruction.cycleTime;
+        }
+    };
+
+    std::vector<HeapEntry> m_instructionHeap;
+    std::map<pid_t, DatafileParser> m_dataMap;
 };
 
 }

@@ -2,6 +2,8 @@
 
 #include "datasetparser.h"
 
+#include <iostream>
+
 namespace CacheHierarchySimulator
 {
 
@@ -36,6 +38,12 @@ void Api::resetSystemState()
 std::vector<SystemStats> Api::runSimulation()
 {
     DatasetParser parser;
+    if (!parser.initialize())
+    {
+        std::cout << "Failed to initialize parser!" << std::endl;
+        exit(1);
+    }
+
     std::vector<SimulatorInstruction> instructionList;
     while (parser.getNextInstructionWave(instructionList))
     {
