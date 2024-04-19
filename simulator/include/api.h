@@ -8,6 +8,8 @@
 namespace CacheHierarchySimulator
 {
 
+// TODO: Add error codes for api
+
 /**
  * Api for adding systems and running simulations on a list of instructions.
  * Has mutiple systems to allow for system comparisons
@@ -21,6 +23,7 @@ public:
     ~Api();
 
     void addSystem(const System& system);
+    size_t getSystemCount();
     void clearSystems();
 
     void resetSystemState();
