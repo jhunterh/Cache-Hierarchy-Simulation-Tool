@@ -11,6 +11,7 @@
 #include "types.h"
 #include "core.h"
 #include "cacheinterface.h"
+#include "exception.h"
 
 namespace CacheHierarchySimulator
 {

@@ -1,6 +1,7 @@
 #include "doctest.h"
 #include "basiccache.h"
 #include "policylist.h"
+#include "exception.h"
 
 TEST_CASE("Test BasicCache constructor")
 {
@@ -138,7 +139,7 @@ TEST_CASE("Test BasicCache constructor")
         CHECK_EQ(stats.readMisses, 0);
         CHECK_EQ(stats.writeHits, 0);
         CHECK_EQ(stats.writeMisses, 0);
-        CHECK_EQ(stats.averageMemoryAccessTime, 0);
+        CHECK_EQ(stats.averageMemoryAccessTime, 1);
 
         delete cache;
     }
@@ -220,14 +221,24 @@ TEST_CASE_FIXTURE(TestBasicCacheFixture, "Test reset method")
 
     // Check that second cache access is hit
     result = cache->read(0x1234);
-    CHECK_EQ(result.accessState, CacheHierarchySimulator::CACHE_HIT);    
+    CHECK_EQ(result.accessState, CacheHierarchySimulator::CACHE_HIT);  
+
+    // Test stats
+    auto stats = cache->getStats();
+    CHECK_EQ(stats.readHits, 1);
+    CHECK_EQ(stats.readMisses, 1);
 
     // Reset cache
     cache->reset();
 
+    // Test stats now empty
+    stats = cache->getStats();
+    CHECK_EQ(stats.readHits, 0);
+    CHECK_EQ(stats.readMisses, 0);
+
     // Check that, after reset, cache access is miss
     result = cache->read(0x1234);
-    CHECK_EQ(result.accessState, CacheHierarchySimulator::CACHE_MISS);    
+    CHECK_EQ(result.accessState, CacheHierarchySimulator::CACHE_MISS);  
 }
 
 TEST_CASE_FIXTURE(TestBasicCacheFixture, "Test read method")
@@ -267,7 +278,7 @@ TEST_CASE_FIXTURE(TestBasicCacheFixture, "Test getStats method")
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 1);
 
     // Do cache read
     cache->read(0x1234);
@@ -278,5 +289,5 @@ TEST_CASE_FIXTURE(TestBasicCacheFixture, "Test getStats method")
     CHECK_EQ(stats.readMisses, 1);
     CHECK_EQ(stats.writeHits, 0);
     CHECK_EQ(stats.writeMisses, 0);
-    CHECK_EQ(stats.averageMemoryAccessTime, 0);
+    CHECK_EQ(stats.averageMemoryAccessTime, 1);
 }

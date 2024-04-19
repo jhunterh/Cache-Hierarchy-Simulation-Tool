@@ -39,13 +39,6 @@ struct CacheFields
     SetIndex index;
 };
 
-class CacheException : public std::exception {};
-class InvalidCacheSizeException : public CacheException {};
-class InvalidAddressSizeException : public CacheException {};
-class InvalidBlockSizeException : public CacheException {};
-class InvalidAssociativitySizeException : public CacheException {};
-class MismatchedAddressSpaceException : public CacheException {};
-
 /**
  * Interface for representing a cache 
 */

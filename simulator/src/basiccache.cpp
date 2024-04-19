@@ -1,5 +1,7 @@
 #include <basiccache.h>
 
+#include "exception.h"
+
 namespace CacheHierarchySimulator
 {
 
@@ -86,6 +88,9 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
     // Create replacement policy instance
     this->replacementPolicy = replacementPolicy.createInstance();
     this->replacementPolicy->initalize(setCount, associativity); // 2^indexSize
+
+    // Set AMAT to latency
+    stats.averageMemoryAccessTime = latency;
 }
 
 BasicCache::BasicCache(const BasicCache& rhs)
@@ -119,6 +124,9 @@ void BasicCache::reset()
     entryTable.resize(entryTableSize);
 
     replacementPolicy->reset();
+
+    stats = ModuleStats{0};
+    stats.averageMemoryAccessTime = latency;
 }
 
 AccessResult BasicCache::read(Address address)
