@@ -156,10 +156,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test reset method")
     CHECK_EQ(stats.averageMemoryAccessTime, 12);
 
     // Do cache read
-    CacheHierarchySimulator::Instruction instRead;
-    instRead.address = 0x1234;
-    instRead.isWrite = false;
-    std::vector<CacheHierarchySimulator::Instruction> instructionList { instRead };
+    CacheHierarchySimulator::SimulatorInstruction instRead;
+    instRead.instruction.address = 0x1234;
+    instRead.instruction.info = 0;
+    std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instRead };
     system->simulate(instructionList);
 
     // Reset system
@@ -206,10 +206,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
     SUBCASE("Test simulate read")
     {
         // Test read
-        CacheHierarchySimulator::Instruction instruction;
-        instruction.address = 0x1234;
-        instruction.isWrite = false;
-        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        CacheHierarchySimulator::SimulatorInstruction instruction;
+        instruction.instruction.address = 0x1234;
+        instruction.instruction.info = 0;
+        std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instruction, instruction };
         system->simulate(instructionList);
 
         // Check correct values
@@ -225,10 +225,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
     SUBCASE("Test simulate write")
     {
         // Test write
-        CacheHierarchySimulator::Instruction instruction;
-        instruction.address = 0x5678;
-        instruction.isWrite = true;
-        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        CacheHierarchySimulator::SimulatorInstruction instruction;
+        instruction.instruction.address = 0x5678;
+        instruction.instruction.info = 0x80;
+        std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instruction, instruction };
         system->simulate(instructionList);
 
         // Check correct values
@@ -277,10 +277,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     CHECK_EQ(stats.averageMemoryAccessTime, 12);
 
     // Do cache read
-    CacheHierarchySimulator::Instruction instRead;
-    instRead.address = 0x1234;
-    instRead.isWrite = false;
-    std::vector<CacheHierarchySimulator::Instruction> instructionList { instRead };
+    CacheHierarchySimulator::SimulatorInstruction instRead;
+    instRead.instruction.address = 0x1234;
+    instRead.instruction.info = 0;
+    std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instRead };
     system->simulate(instructionList);
 
     // Test return values
