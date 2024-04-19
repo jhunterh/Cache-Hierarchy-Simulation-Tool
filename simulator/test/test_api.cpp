@@ -99,10 +99,10 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test resetSystemState method")
     api->addSystem(system);
 
     // Execute read instruction
-    CacheHierarchySimulator::Instruction instruction;
-    instruction.address = 0x1234;
-    instruction.isWrite = false;
-    std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction };
+    CacheHierarchySimulator::SimulatorInstruction instruction;
+    instruction.instruction.address = 0x1234;
+    instruction.instruction.info = 0;
+    std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instruction };
     auto statList = api->runSimulation(instructionList);
 
     // Check that stats show 1 read
@@ -137,10 +137,10 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test runSimulation method")
     SUBCASE("Test simulate read")
     {
         // Test read
-        CacheHierarchySimulator::Instruction instruction;
-        instruction.address = 0x1234;
-        instruction.isWrite = false;
-        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        CacheHierarchySimulator::SimulatorInstruction instruction;
+        instruction.instruction.address = 0x1234;
+        instruction.instruction.info = 0;
+        std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instruction, instruction };
         auto statList = api->runSimulation(instructionList);
 
         // Check correct values
@@ -156,10 +156,10 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test runSimulation method")
     SUBCASE("Test simulate write")
     {
         // Test write
-        CacheHierarchySimulator::Instruction instruction;
-        instruction.address = 0x5678;
-        instruction.isWrite = true;
-        std::vector<CacheHierarchySimulator::Instruction> instructionList { instruction, instruction };
+        CacheHierarchySimulator::SimulatorInstruction instruction;
+        instruction.instruction.address = 0x5678;
+        instruction.instruction.info = 0x80;
+        std::vector<CacheHierarchySimulator::SimulatorInstruction> instructionList { instruction, instruction };
         auto statList = api->runSimulation(instructionList);
 
         // Check correct values
