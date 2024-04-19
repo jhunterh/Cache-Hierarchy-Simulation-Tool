@@ -44,15 +44,15 @@ bool DatafileParser::initialize()
 
 std::string DatafileParser::getDataFileName()
 {
-    std::ostringstream filename(m_fileHeading);
-    filename << std::to_string(m_fileIdx) << ".dat";
+    std::ostringstream filename("");
+    filename << m_fileHeading << "_" << std::to_string(m_fileIdx) << ".dat";
     return filename.str();
 }
 
 std::string DatafileParser::getJsonFileName()
 {
-    std::ostringstream filename(m_fileHeading);
-    filename << std::to_string(m_fileIdx) << ".json";
+    std::ostringstream filename("");
+    filename << m_fileHeading << "_" << std::to_string(m_fileIdx) << ".json";
     return filename.str();
 }
 
@@ -101,7 +101,7 @@ bool DatafileParser::getNextInstructionWave()
 bool DatafileParser::openNextFile()
 {
     bool success = true;
-    pclose(m_dataFile);
+    if (m_dataFile != nullptr) pclose(m_dataFile);
 
     // read config file
     std::string configFileName = getJsonFileName();
