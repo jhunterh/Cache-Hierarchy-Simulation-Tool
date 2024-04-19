@@ -105,7 +105,6 @@ bool DatafileParser::openNextFile()
 
     // read config file
     std::string configFileName = getJsonFileName();
-    std::cout << "Reading config at: " << configFileName << std::endl;
     std::ifstream configFile(configFileName);
     json configObj = json::parse(configFile);
     configFile.close();

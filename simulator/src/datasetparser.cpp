@@ -83,7 +83,7 @@ bool DatasetParser::initialize()
         {
             // need to create new parser and initialize
             DatafileParser parser(fileHeader, pid);
-            m_dataMap.insert(std::make_pair(pid, parser));
+            m_dataMap.emplace(pid, parser);
             ++numKeys;
 
             if (!parser.initialize())
