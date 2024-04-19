@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+set(CMAKE_C_COMPILER gcc  CACHE PATH "" FORCE)
+set(CMAKE_CXX_COMPILER g++  CACHE PATH "" FORCE)
+
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+
 project(chs-simulator)
 
 set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Werror")
