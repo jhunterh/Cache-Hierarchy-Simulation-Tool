@@ -26,8 +26,9 @@ bool DatasetParser::getNextInstructionWave(std::vector<SimulatorInstruction>& in
         }
         else
         {
-            HeapEntry item = m_instructionHeap.front();
             std::pop_heap(m_instructionHeap.begin(), m_instructionHeap.end(), HeapEntryComparator());
+            HeapEntry item = m_instructionHeap.back();
+            m_instructionHeap.pop_back();
             instructionList.push_back(item.instruction);
             item.instruction = item.parser->getNextInstruction();
             if (!item.parser->hasFinished())
