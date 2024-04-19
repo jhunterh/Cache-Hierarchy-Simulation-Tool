@@ -9,7 +9,13 @@ simpleTest: simpleTest.cpp
 parallelSimpleTest: parallelSimpleTest.cpp
 	g++ -o $@ $^ -fopenmp
 
-all: forkTest simpleTest parallelSimpleTest
+matrixMultSingleIneff: matrixMultSingleIneff.cpp
+	g++ -o $@ $^
+
+matrixMultSingle: matrixMultSingle.cpp
+	g++ -o $@ $^
+
+all: forkTest simpleTest parallelSimpleTest matrixMultSingleIneff matrixMultSingle
 
 clean:
 	rm -f forkTest simpleTest parallelSimpleTest
