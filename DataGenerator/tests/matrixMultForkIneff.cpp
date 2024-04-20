@@ -29,7 +29,13 @@ void multiplyMatrices(int **matrix1, int **matrix2, int **result, int size, int 
 }
 
 int main(int argc, char** argv) {
+    if (argc != 3)
+    {
+        std::cout << "usage: " << "./matrixMultForkIneff <size of matrix> <num of processes>" << std::endl;
+        return 1;
+    }
     int n = atoi(argv[1]);
+    int num_processes = atoi(argv[2]);
 
     // Allocate memory for matrices in shared memory
     int **matrix1 = reinterpret_cast<int**>(mmap(NULL, n * sizeof(int*), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
@@ -47,7 +53,6 @@ int main(int argc, char** argv) {
     fillRandom(matrix2, n);
 
     // Fork processes for matrix multiplication
-    int num_processes = 4;
     int rows_per_process = n / num_processes;
     for (int i = 0; i < num_processes; ++i) {
         pid_t pid = fork();

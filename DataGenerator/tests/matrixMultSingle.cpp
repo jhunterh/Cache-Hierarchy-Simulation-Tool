@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -25,6 +26,11 @@ void multiplyMatrices(int **matrix1, int **matrix2, int **result, int size) {
 }
 
 int main(int argc, char** argv) {
+    if (argc != 2)
+    {
+        std::cout << "usage: " << "./matrixMultSingle <size of matrix>" << std::endl;
+        return 1;
+    }
     int n = atoi(argv[1]);
 
     // Allocate memory for matrices
