@@ -15,7 +15,19 @@ matrixMultSingleIneff: matrixMultSingleIneff.cpp
 matrixMultSingle: matrixMultSingle.cpp
 	g++ -o $@ $^
 
-all: forkTest simpleTest parallelSimpleTest matrixMultSingleIneff matrixMultSingle
+matrixMultOpenMP: matrixMultOpenMP.cpp
+	g++ -o $@ $^ -fopenmp
+
+matrixMultOpenMPIneff: matrixMultOpenMPIneff.cpp
+	g++ -o $@ $^ -fopenmp
+
+matrixMultFork: matrixMultFork.cpp
+	g++ -o $@ $^
+
+matrixMultForkIneff: matrixMultForkIneff.cpp
+	g++ -o $@ $^
+
+all: forkTest simpleTest parallelSimpleTest matrixMultSingleIneff matrixMultSingle matrixMultOpenMP matrixMultOpenMPIneff matrixMultFork matrixMultForkIneff
 
 clean:
-	rm -f forkTest simpleTest parallelSimpleTest
+	rm -f forkTest simpleTest parallelSimpleTest matrixMultSingleIneff matrixMultSingle matrixMultOpenMP matrixMultOpenMPIneff matrixMultFork matrixMultForkIneff
