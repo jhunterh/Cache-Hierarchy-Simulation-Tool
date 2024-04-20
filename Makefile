@@ -19,9 +19,13 @@ RunTests:
 	$(MAKE) -C DataGenerator/test RunTests
 	simulator/bin/test_simulator
 
-all: DataGeneratorTool Simulator SimulatorMain BuildTests RunTests
+BenchTests:
+	$(MAKE) -C DataGenerator/tests all
+
+all: DataGeneratorTool Simulator SimulatorMain BenchTests BuildTests RunTests
 
 clean:
 	rm -f DataGenerator/obj-intel64/*
 	$(MAKE) -C simulator clean
 	$(MAKE) -C DataGenerator/test clean
+	$(MAKE) -C DataGenerator/tests clean
