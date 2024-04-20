@@ -9,16 +9,17 @@ DataGeneratorTool:
 Simulator:
 	$(MAKE) -C simulator all
 
-SimulatorExample: Simulator
-	g++ -std=c++17 -o $@ $(INCLUDES) simulator-example/src/simulation.cpp $(LIBS)
+SimulatorMain: Simulator
+	g++ -std=c++17 -o $@ $(INCLUDES) simulator-main/src/simulation.cpp $(LIBS)
 
 BuildTests:
 	$(MAKE) -C DataGenerator/test all
 
 RunTests:
 	$(MAKE) -C DataGenerator/test RunTests
+	simulator/bin/test_simulator
 
-all: DataGeneratorTool Simulator BuildTests RunTests
+all: DataGeneratorTool Simulator SimulatorMain BuildTests RunTests
 
 clean:
 	rm -f DataGenerator/obj-intel64/*
