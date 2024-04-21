@@ -3,6 +3,7 @@
 
 #include "instruction.h"
 #include "system.h"
+#include "basiccache.h"
 #include "replacementpolicy/policylist.h"
 
 namespace CacheHierarchySimulator
