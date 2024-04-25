@@ -51,7 +51,6 @@ private:
     std::vector<Core> coreList;
     std::vector<std::shared_ptr<CacheInterface>> sharedCacheList;
 
-
     // TODO: Add custom scheduler policies
     std::unordered_map<uint32_t, size_t> pidToCoreMap;
     size_t getCoreIdFromPid(uint32_t pid);
