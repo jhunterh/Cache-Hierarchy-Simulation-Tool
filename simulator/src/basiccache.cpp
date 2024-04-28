@@ -89,8 +89,10 @@ BasicCache::BasicCache(AddressSize addressSize, CacheSize cacheSize, BlockSize b
     this->replacementPolicy = replacementPolicy.createInstance();
     this->replacementPolicy->initalize(setCount, associativity); // 2^indexSize
 
-    // Set AMAT to latency
-    stats.averageMemoryAccessTime = latency;
+    // Save latency in stats
+    // Note: Is kinda redundant, so might be better in 
+    // future to remove latency variable and just save here
+    stats.latency = latency;
 }
 
 BasicCache::BasicCache(const BasicCache& rhs)
@@ -125,8 +127,8 @@ void BasicCache::reset()
 
     replacementPolicy->reset();
 
-    stats = ModuleStats{0};
-    stats.averageMemoryAccessTime = latency;
+    stats = {};
+    stats.latency = latency;
 }
 
 AccessResult BasicCache::read(Address address)
@@ -188,7 +190,7 @@ void BasicCache::replaceLine(Address address)
     cacheEntry.valid = true;
 }
 
-ModuleStats BasicCache::getStats()
+CacheStats BasicCache::getStats()
 {
     return stats;
 }

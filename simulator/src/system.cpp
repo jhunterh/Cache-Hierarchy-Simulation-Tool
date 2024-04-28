@@ -81,7 +81,7 @@ void System::reset()
     }
 
     // Reset stats
-    stats = ModuleStats{0};
+    stats = {};
 }
 
 
@@ -201,10 +201,8 @@ AccessResult System::write(Core& core, Address address)
 
 SystemStats System::getStats() const
 {
-    SystemStats systemStats;
-
     // Save system module stats
-    systemStats.totalSystemStats = stats;
+    SystemStats systemStats = stats;
 
     // TODO: Possibly calculate AMAT from logging time for each access and averaging
     // Should be faster but don't have time to confirm correctness
@@ -214,14 +212,13 @@ SystemStats System::getStats() const
     double systemAMAT = static_cast<double>(memoryLatency);
     for (size_t i = sharedCacheList.size(); i --> 0 ;)
     {
-        ModuleStats cacheStats = sharedCacheList.at(i)->getStats();
+        CacheStats cacheStats = sharedCacheList.at(i)->getStats();
         
         uint64_t misses = cacheStats.readMisses + cacheStats.writeMisses;
         uint64_t totalAccesses = misses + cacheStats.readHits + cacheStats.writeHits;
         double missRatio = (totalAccesses > 0) ? static_cast<double>(misses)/totalAccesses : 1.0;
 
-        cacheStats.averageMemoryAccessTime += systemAMAT * missRatio;
-        systemAMAT = cacheStats.averageMemoryAccessTime;
+        systemAMAT = (systemAMAT * missRatio) + cacheStats.latency;
 
         systemStats.sharedCacheStats.push_back(cacheStats);
     }
@@ -232,18 +229,16 @@ SystemStats System::getStats() const
     for(const Core& core : coreList)
     {
         CoreStats coreStats = core.getStats();
-        double& coreAMAT = coreStats.totalCoreStats.averageMemoryAccessTime;
-        coreAMAT = systemAMAT;
+        double coreAMAT = systemAMAT;
         for (size_t i = coreStats.cacheStats.size(); i --> 0 ;)
         {
-            ModuleStats cacheStats = coreStats.cacheStats.at(i);
+            CacheStats cacheStats = coreStats.cacheStats.at(i);
             
             uint64_t misses = cacheStats.readMisses + cacheStats.writeMisses;
             uint64_t totalAccesses = misses + cacheStats.readHits + cacheStats.writeHits;
             double missRatio = (totalAccesses > 0) ? static_cast<double>(misses)/totalAccesses : 1.0;
 
-            cacheStats.averageMemoryAccessTime += coreAMAT * missRatio;
-            coreAMAT = cacheStats.averageMemoryAccessTime;
+            coreAMAT = (coreAMAT * missRatio) + cacheStats.latency;
         }
 
         totalCoreAMAT += coreAMAT;
@@ -251,7 +246,7 @@ SystemStats System::getStats() const
     }
 
     // Finish calculating AMAT
-    systemStats.totalSystemStats.averageMemoryAccessTime = (coreList.size() > 0) ? (totalCoreAMAT / coreList.size()) : totalCoreAMAT;
+    systemStats.averageMemoryAccessTime = (coreList.size() > 0) ? (totalCoreAMAT / coreList.size()) : totalCoreAMAT;
     
     return systemStats;
 }

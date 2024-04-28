@@ -107,7 +107,7 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test resetSystemState method")
 
     // Check that stats show 1 read
     REQUIRE_EQ(statList.size(), 1);
-    auto systemStats = statList.at(0).totalSystemStats;
+    auto systemStats = statList.at(0);
     CHECK_EQ(systemStats.readMisses, 1);
 
     // Reset system state
@@ -118,7 +118,7 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test resetSystemState method")
 
     // Check that stats show 1 read
     REQUIRE_EQ(statList.size(), 1);
-    systemStats = statList.at(0).totalSystemStats;
+    systemStats = statList.at(0);
     CHECK_EQ(systemStats.readMisses, 1);
 }
 
@@ -145,7 +145,7 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test runSimulation method")
 
         // Check correct values
         REQUIRE_EQ(statList.size(), 1);
-        auto stats = statList.at(0).totalSystemStats;
+        auto stats = statList.at(0);
         CHECK_EQ(stats.readHits, 1);
         CHECK_EQ(stats.readMisses, 1);
         CHECK_EQ(stats.writeHits, 0);
@@ -164,7 +164,7 @@ TEST_CASE_FIXTURE(TestApiFixture, "Test runSimulation method")
 
         // Check correct values
         REQUIRE_EQ(statList.size(), 1);
-        auto stats = statList.at(0).totalSystemStats;
+        auto stats = statList.at(0);
         CHECK_EQ(stats.readHits, 0);
         CHECK_EQ(stats.readMisses, 0);
         CHECK_EQ(stats.writeHits, 1);

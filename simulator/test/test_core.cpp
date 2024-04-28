@@ -108,7 +108,7 @@ TEST_CASE_FIXTURE(TestCoreFixture, "Test reset method")
 
     // Test stats
     auto coreStats = core->getStats();
-    auto stats = coreStats.totalCoreStats;
+    auto stats = coreStats;
     CHECK_EQ(stats.readHits, 1);
     CHECK_EQ(stats.readMisses, 1);
 
@@ -117,7 +117,7 @@ TEST_CASE_FIXTURE(TestCoreFixture, "Test reset method")
 
     // Test stats now empty
     coreStats = core->getStats();
-    stats = coreStats.totalCoreStats;
+    stats = coreStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
 
@@ -175,7 +175,7 @@ TEST_CASE_FIXTURE(TestCoreFixture, "Test getStats method")
     auto coreStats = core->getStats();
     CHECK_EQ(coreStats.cacheStats.size(), 0);
 
-    auto stats = coreStats.totalCoreStats;
+    auto stats = coreStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -192,7 +192,7 @@ TEST_CASE_FIXTURE(TestCoreFixture, "Test getStats method")
     coreStats = core->getStats();
     CHECK_EQ(coreStats.cacheStats.size(), 1);
     
-    stats = coreStats.totalCoreStats;
+    stats = coreStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -205,7 +205,7 @@ TEST_CASE_FIXTURE(TestCoreFixture, "Test getStats method")
     coreStats = core->getStats();
     CHECK_EQ(coreStats.cacheStats.size(), 1);
     
-    stats = coreStats.totalCoreStats;
+    stats = coreStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 1);
     CHECK_EQ(stats.writeHits, 0);

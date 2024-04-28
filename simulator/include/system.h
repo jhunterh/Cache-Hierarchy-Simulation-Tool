@@ -46,7 +46,7 @@ private:
     CycleTime memoryLatency;
     size_t nextCoreId;
 
-    ModuleStats stats;
+    SystemStats stats;
 
     std::vector<Core> coreList;
     std::vector<std::shared_ptr<CacheInterface>> sharedCacheList;

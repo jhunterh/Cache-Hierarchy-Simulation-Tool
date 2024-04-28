@@ -55,12 +55,12 @@ int main(int argc, char** argv)
     {
         outputFile << "- System #" << +systemIdx << std::endl;
         const auto& systemStat = stats.at(systemIdx);
-        outputFile << "    - System averageMemoryAccessTime " << systemStat.totalSystemStats.averageMemoryAccessTime << std::endl;
-        outputFile << "    - System missRate " << calculateMissRate(systemStat.totalSystemStats) << std::endl;
-        outputFile << "    - System readHits " << systemStat.totalSystemStats.readHits << std::endl;
-        outputFile << "    - System readMisses " << systemStat.totalSystemStats.readMisses << std::endl;
-        outputFile << "    - System writeHits " << systemStat.totalSystemStats.writeHits << std::endl;
-        outputFile << "    - System writeMisses " << systemStat.totalSystemStats.writeMisses << std::endl << std::endl;
+        outputFile << "    - System averageMemoryAccessTime " << systemStat.averageMemoryAccessTime << std::endl;
+        outputFile << "    - System missRate " << calculateMissRate(systemStat) << std::endl;
+        outputFile << "    - System readHits " << systemStat.readHits << std::endl;
+        outputFile << "    - System readMisses " << systemStat.readMisses << std::endl;
+        outputFile << "    - System writeHits " << systemStat.writeHits << std::endl;
+        outputFile << "    - System writeMisses " << systemStat.writeMisses << std::endl << std::endl;
 
         const auto& coreStats = systemStat.coreStats;
         size_t cacheIdx = 0;
@@ -69,19 +69,17 @@ int main(int argc, char** argv)
 
             outputFile << "    - Core #" << +coreIdx << std::endl;
             const auto& coreStat = coreStats.at(coreIdx);
-            outputFile << "        - Core averageMemoryAccessTime " << coreStat.totalCoreStats.averageMemoryAccessTime << std::endl;
-            outputFile << "        - Core missRate " << calculateMissRate(coreStat.totalCoreStats) << std::endl;
-            outputFile << "        - Core readHits " << coreStat.totalCoreStats.readHits << std::endl;
-            outputFile << "        - Core readMisses " << coreStat.totalCoreStats.readMisses << std::endl;
-            outputFile << "        - Core writeHits " << coreStat.totalCoreStats.writeHits << std::endl;
-            outputFile << "        - Core writeMisses " << coreStat.totalCoreStats.writeMisses << std::endl << std::endl;
+            outputFile << "        - Core missRate " << calculateMissRate(coreStat) << std::endl;
+            outputFile << "        - Core readHits " << coreStat.readHits << std::endl;
+            outputFile << "        - Core readMisses " << coreStat.readMisses << std::endl;
+            outputFile << "        - Core writeHits " << coreStat.writeHits << std::endl;
+            outputFile << "        - Core writeMisses " << coreStat.writeMisses << std::endl << std::endl;
 
             const auto& cacheStats = coreStat.cacheStats;
             for (cacheIdx = 0; cacheIdx < cacheStats.size(); cacheIdx++)
             {
                 const auto& cacheStat = cacheStats.at(cacheIdx);
                 outputFile << "        - L" << +(cacheIdx + 1) <<  " Cache Stats" << std::endl;
-                outputFile << "            - Cache averageMemoryAccessTime " << cacheStat.averageMemoryAccessTime << std::endl;
                 outputFile << "            - Cache missRate " << calculateMissRate(cacheStat) << std::endl;
                 outputFile << "            - Cache readHits " << cacheStat.readHits << std::endl;
                 outputFile << "            - Cache readMisses " << cacheStat.readMisses << std::endl;
@@ -95,7 +93,6 @@ int main(int argc, char** argv)
         {
             const auto& sharedCacheStat = sharedCacheStats.at(sharedCacheIdx);
             outputFile << "    - Shared L" << +(sharedCacheIdx + cacheIdx + 1) << " Cache Stats" << std::endl;
-            outputFile << "        - Cache averageMemoryAccessTime " << sharedCacheStat.averageMemoryAccessTime << std::endl;
             outputFile << "        - Cache missRate " << calculateMissRate(sharedCacheStat) << std::endl;
             outputFile << "        - Cache readHits " << sharedCacheStat.readHits << std::endl;
             outputFile << "        - Cache readMisses " << sharedCacheStat.readMisses << std::endl;
