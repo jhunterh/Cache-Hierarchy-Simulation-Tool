@@ -144,11 +144,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test reset method")
     system->addSharedCache(cache);
 
     // Check stats at zero
-    auto systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+    auto stats = system->getStats();
+    CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 1);
+    CHECK_EQ(stats.sharedCacheStats.size(), 1);
     
-    auto stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -166,11 +165,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test reset method")
     system->reset();
 
     // Check still at 0
-    systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+    stats = system->getStats();
+    CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 1);
+    CHECK_EQ(stats.sharedCacheStats.size(), 1);
     
-    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -191,11 +189,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
     SUBCASE("Test stats start at zero")
     {
         // Check stats at zero
-        auto systemStats = system->getStats();
-        CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-        CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+        auto stats = system->getStats();
+        CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 1);
+        CHECK_EQ(stats.sharedCacheStats.size(), 1);
         
-        auto stats = systemStats.totalSystemStats;
         CHECK_EQ(stats.readHits, 0);
         CHECK_EQ(stats.readMisses, 0);
         CHECK_EQ(stats.writeHits, 0);
@@ -213,8 +210,7 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
         system->simulate(instructionList);
 
         // Check correct values
-        auto systemStats = system->getStats();
-        auto stats = systemStats.totalSystemStats;
+        auto stats = system->getStats();
         CHECK_EQ(stats.readHits, 1);
         CHECK_EQ(stats.readMisses, 1);
         CHECK_EQ(stats.writeHits, 0);
@@ -232,8 +228,7 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
         system->simulate(instructionList);
 
         // Check correct values
-        auto systemStats = system->getStats();
-        auto stats = systemStats.totalSystemStats;
+        auto stats = system->getStats();
         CHECK_EQ(stats.readHits, 0);
         CHECK_EQ(stats.readMisses, 0);
         CHECK_EQ(stats.writeHits, 1);
@@ -245,11 +240,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test simulate method")
 TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
 {
     // Test that stats start at 0
-    auto systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 0);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 0);
+    auto stats = system->getStats();
+    CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 0);
+    CHECK_EQ(stats.sharedCacheStats.size(), 0);
 
-    auto stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -265,11 +259,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     system->addSharedCache(cache);
 
     // Check still at 0, but vectors have elements
-    systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+    stats = system->getStats();
+    CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 1);
+    CHECK_EQ(stats.sharedCacheStats.size(), 1);
     
-    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 0);
     CHECK_EQ(stats.writeHits, 0);
@@ -284,11 +277,10 @@ TEST_CASE_FIXTURE(TestSystemFixture, "Test getStats method")
     system->simulate(instructionList);
 
     // Test return values
-    systemStats = system->getStats();
-    CHECK_EQ(systemStats.coreStats.at(1).cacheStats.size(), 1);
-    CHECK_EQ(systemStats.sharedCacheStats.size(), 1);
+    stats = system->getStats();
+    CHECK_EQ(stats.coreStats.at(1).cacheStats.size(), 1);
+    CHECK_EQ(stats.sharedCacheStats.size(), 1);
     
-    stats = systemStats.totalSystemStats;
     CHECK_EQ(stats.readHits, 0);
     CHECK_EQ(stats.readMisses, 1);
     CHECK_EQ(stats.writeHits, 0);

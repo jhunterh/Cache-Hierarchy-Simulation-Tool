@@ -36,20 +36,23 @@ struct ModuleStats
     uint64_t readMisses = 0;
     uint64_t writeHits = 0;
     uint64_t writeMisses = 0;
+};
+
+struct CacheStats : ModuleStats
+{
+    CycleTime latency;
+};
+
+struct CoreStats : ModuleStats
+{
+    std::vector<CacheStats> cacheStats;  
+};
+
+struct SystemStats : ModuleStats
+{
     double averageMemoryAccessTime = 0;
-};
-
-struct CoreStats
-{
-    ModuleStats totalCoreStats;
-    std::vector<ModuleStats> cacheStats;  
-};
-
-struct SystemStats
-{
-    ModuleStats totalSystemStats;
     std::vector<CoreStats> coreStats;
-    std::vector<ModuleStats> sharedCacheStats;
+    std::vector<CacheStats> sharedCacheStats;
 };
 
 }

@@ -27,7 +27,7 @@ public:
     AccessResult read(Address address);
     AccessResult write(Address address);
 
-    ModuleStats getStats();
+    CacheStats getStats();
 
 private:
 
@@ -43,7 +43,7 @@ private:
     WritePolicy writePolicy;
     ReplacementPolicy::PolicyPtr replacementPolicy;
 
-    ModuleStats stats;
+    CacheStats stats;
 
     AddressMask tagMask;
     AddressMask indexMask;

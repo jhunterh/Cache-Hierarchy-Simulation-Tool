@@ -35,7 +35,7 @@ private:
 
     AddressSize addressSpace;
 
-    ModuleStats stats;
+    CoreStats stats;
 
     std::vector<std::unique_ptr<CacheInterface>> cacheList;
 

@@ -39,7 +39,7 @@ void Core::reset()
         cache->reset();
     }
 
-    stats = ModuleStats{0};
+    stats = {};
 }
 
 AccessResult Core::read(Address address)
@@ -118,8 +118,7 @@ AccessResult Core::write(Address address)
 
 CoreStats Core::getStats() const
 {
-    CoreStats coreStats;
-    coreStats.totalCoreStats = stats;
+    CoreStats coreStats = stats;
 
     coreStats.cacheStats.reserve(cacheList.size());
     for(const std::unique_ptr<CacheInterface>& cache : cacheList)

@@ -56,7 +56,7 @@ public:
     virtual AccessResult read(Address address) = 0;
     virtual AccessResult write(Address address) = 0;
 
-    virtual ModuleStats getStats() = 0;
+    virtual CacheStats getStats() = 0;
 
 };
 
